@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hang-gramaroo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0070F2;--primary-light:#E1F4FF;--accent:#1B90FF;--dark:#00144A;
+  --bg:#F4F6F9;--card:#FFFFFF;--card-a:rgba(255,255,255,0.92);--border:#E1E2E6;
+  --text:#1a1a2e;--text-light:#5a6077;
+  --success:#2E7D32;--success-bg:#E8F5E9;--danger:#C62828;--danger-bg:#FFEBEE;
+  --warning:#F57F17;--warning-bg:#FFF8E1;--gold:#FFD700;
+  --header-bg:linear-gradient(135deg,var(--dark) 0%,#002A86 100%);
+  --header-text:#fff;
+}
+body{font-family:'Inter','72 Brand',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;position:relative}
+
+/* ═══ THEME BACKGROUND ═══ */
+.theme-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;transition:background 1s ease}
+.theme-bg.underwater{background:linear-gradient(180deg,#006994 0%,#004466 40%,#002233 100%)}
+.theme-bg.farm{background:linear-gradient(180deg,#87CEEB 0%,#B0E0F0 55%,#7CCD7C 55.1%,#4A8F3C 100%)}
+.theme-bg.sky{background:linear-gradient(180deg,#4CA1FF 0%,#87CEFA 40%,#B0E2FF 70%,#E0F0FF 100%)}
+.theme-bg.outerspace{background:linear-gradient(180deg,#0a0a1a 0%,#0d1033 50%,#1a0a2e 100%)}
+
+/* animated elements */
+.theme-el{position:absolute;pointer-events:none;will-change:transform}
+
+/* ── UNDERWATER ELEMENTS ── */
+.uw-bubble{border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.5),rgba(255,255,255,0.08));border:1px solid rgba(255,255,255,0.15);animation:uwBubbleRise linear forwards}
+@keyframes uwBubbleRise{0%{transform:translateY(0) translateX(0) scale(1);opacity:.6}50%{transform:translateY(-45vh) translateX(15px) scale(1.1);opacity:.4}100%{transform:translateY(-105vh) translateX(-10px) scale(0.8);opacity:0}}
+.uw-fish{animation:uwFishSwim linear forwards}
+@keyframes uwFishSwim{0%{transform:translateX(0)}100%{transform:translateX(calc(100vw + 120px))}}
+.uw-fish.reverse{animation-name:uwFishSwimR;transform:scaleX(-1)}
+@keyframes uwFishSwimR{0%{transform:translateX(0) scaleX(-1)}100%{transform:translateX(calc(-100vw - 120px)) scaleX(-1)}}
+.uw-jelly{animation:uwJellyFloat linear forwards}
+@keyframes uwJellyFloat{0%{transform:translateY(0) translateX(0);opacity:.7}50%{transform:translateY(-40vh) translateX(20px);opacity:.6}100%{transform:translateY(-110vh) translateX(-15px);opacity:0}}
+.uw-seaweed{position:absolute;bottom:0;transform-origin:bottom center;animation:uwSway 3s ease-in-out infinite alternate}
+@keyframes uwSway{0%{transform:rotate(-5deg)}100%{transform:rotate(5deg)}}
+.uw-ray{position:absolute;top:-10%;width:3px;height:110%;opacity:0.06;background:linear-gradient(180deg,rgba(255,255,200,0.7),transparent 70%);transform:rotate(var(--r));animation:uwRayPulse 4s ease-in-out infinite alternate}
+@keyframes uwRayPulse{0%{opacity:0.03}100%{opacity:0.09}}
+.uw-turtle{animation:uwTurtleSwim linear forwards}
+@keyframes uwTurtleSwim{0%{transform:translateX(0)}100%{transform:translateX(calc(100vw + 160px))}}
+.uw-turtle.reverse{animation-name:uwTurtleSwimR}
+@keyframes uwTurtleSwimR{0%{transform:translateX(0) scaleX(-1)}100%{transform:translateX(calc(-100vw - 160px)) scaleX(-1)}}
+.uw-coral{position:absolute;bottom:0}
+.uw-kelp{position:absolute;bottom:0;transform-origin:bottom center;animation:uwKelpSway ease-in-out infinite alternate}
+@keyframes uwKelpSway{0%{transform:rotate(-8deg) skewX(-2deg)}50%{transform:rotate(2deg) skewX(1deg)}100%{transform:rotate(6deg) skewX(2deg)}}
+
+/* ── FARM ELEMENTS ── */
+.farm-cloud{background:radial-gradient(ellipse,rgba(255,255,255,0.85),rgba(255,255,255,0.2));border-radius:50%;filter:blur(2px);animation:farmDrift linear infinite}
+@keyframes farmDrift{0%{transform:translateX(-200px)}100%{transform:translateX(calc(100vw + 200px))}}
+.farm-bird{animation:farmBirdFly linear forwards}
+@keyframes farmBirdFly{0%{transform:translateX(-60px) translateY(0)}25%{transform:translateX(25vw) translateY(-15px)}50%{transform:translateX(50vw) translateY(5px)}75%{transform:translateX(75vw) translateY(-10px)}100%{transform:translateX(calc(100vw + 60px)) translateY(0)}}
+.farm-butterfly{animation:farmButterfly linear forwards}
+@keyframes farmButterfly{0%{transform:translate(0,0)}25%{transform:translate(20vw,-30px)}50%{transform:translate(40vw,20px)}75%{transform:translate(60vw,-15px)}100%{transform:translate(calc(100vw + 40px),10px)}}
+.farm-animal{position:absolute;bottom:4%;animation:farmAnimalWalk linear forwards}
+.farm-animal svg{animation:farmLegBob 0.6s ease-in-out infinite alternate}
+@keyframes farmAnimalWalk{0%{transform:translateX(-100px)}100%{transform:translateX(calc(100vw + 100px))}}
+@keyframes farmLegBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}
+.farm-sun{position:absolute;top:6%;right:10%;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,#FFE066,#FFA500);box-shadow:0 0 50px 15px rgba(255,200,50,0.3);animation:farmSunPulse 5s ease-in-out infinite alternate}
+@keyframes farmSunPulse{0%{box-shadow:0 0 50px 15px rgba(255,200,50,0.3)}100%{box-shadow:0 0 70px 25px rgba(255,200,50,0.45)}}
+
+/* ── SKY ELEMENTS ── */
+.sky-cloud{border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,0.9),rgba(255,255,255,0.1));filter:blur(1px);animation:skyDrift linear infinite}
+@keyframes skyDrift{0%{transform:translateX(-250px)}100%{transform:translateX(calc(100vw + 250px))}}
+.sky-bird{animation:skyBirdFly linear forwards}
+@keyframes skyBirdFly{0%{transform:translateX(-50px) translateY(0) scaleX(1)}20%{transform:translateX(20vw) translateY(-20px)}40%{transform:translateX(40vw) translateY(10px)}60%{transform:translateX(60vw) translateY(-15px)}80%{transform:translateX(80vw) translateY(5px)}100%{transform:translateX(calc(100vw + 50px)) translateY(-10px)}}
+.sky-sunray{position:absolute;top:8%;left:15%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,230,100,0.6),rgba(255,200,50,0.1),transparent 70%);animation:skySunGlow 6s ease-in-out infinite alternate}
+@keyframes skySunGlow{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.15);opacity:1}}
+
+/* ── OUTERSPACE ELEMENTS ── */
+.space-star{border-radius:50%;animation:spaceTwinkle ease-in-out infinite alternate}
+.space-star.bright{box-shadow:0 0 4px 1px rgba(255,255,255,0.4)}
+.space-star.colored{box-shadow:0 0 3px 1px currentColor}
+@keyframes spaceTwinkle{0%{opacity:0.15;transform:scale(0.6)}50%{opacity:0.7;transform:scale(1)}100%{opacity:1;transform:scale(1.3)}}
+.space-star-cross{position:absolute;width:1px;height:1px}
+.space-star-cross::before,.space-star-cross::after{content:'';position:absolute;background:#fff;border-radius:1px}
+.space-star-cross::before{width:1px;height:var(--arm);top:50%;left:50%;transform:translate(-50%,-50%)}
+.space-star-cross::after{width:var(--arm);height:1px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.space-star-cross{animation:spaceCrossTwinkle 2s ease-in-out infinite alternate}
+@keyframes spaceCrossTwinkle{0%{opacity:0.3;transform:scale(0.7) rotate(0deg)}100%{opacity:1;transform:scale(1.2) rotate(45deg)}}
+.space-shootstar{height:2px;background:linear-gradient(90deg,rgba(255,255,255,0.9),transparent);border-radius:1px;animation:spaceShoot linear forwards}
+@keyframes spaceShoot{0%{transform:translateX(0) translateY(0);opacity:1}100%{transform:translateX(-60vw) translateY(40vh);opacity:0}}
+.space-planet{border-radius:50%;animation:spacePlanetDrift linear infinite}
+@keyframes spacePlanetDrift{0%{transform:translateX(-150px) rotate(0deg)}100%{transform:translateX(calc(100vw + 150px)) rotate(360deg)}}
+.space-asteroid{background:#666;border-radius:30% 50% 40% 60%;animation:spaceAsteroid linear forwards}
+@keyframes spaceAsteroid{0%{transform:translateX(0) rotate(0deg)}100%{transform:translateX(calc(-100vw - 100px)) rotate(720deg)}}
+.space-nebula{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.12;animation:spaceNebulaPulse 12s ease-in-out infinite alternate}
+@keyframes spaceNebulaPulse{0%{transform:scale(1);opacity:.08}100%{transform:scale(1.1);opacity:.15}}
+
+/* ═══ THEME OVERRIDES ═══ */
+body.t-underwater{--card-a:rgba(255,255,255,0.92);--bg:transparent;color:#e8f4f8}
+body.t-underwater .header{background:linear-gradient(135deg,rgba(0,40,70,0.92),rgba(0,80,120,0.92))}
+body.t-underwater .sentence-card,body.t-underwater .kanga-panel{background:var(--card-a);color:#1a1a2e}
+body.t-underwater .sentence-text{color:#1a1a2e}
+body.t-underwater .q-number{color:#3a5068}
+body.t-underwater .category-badge{color:#005a8c;background:rgba(0,120,180,0.15)}
+body.t-underwater .choice-btn{background:rgba(255,255,255,0.92);color:#1a1a2e;border-color:rgba(0,80,140,0.2)}
+body.t-underwater .choice-btn:hover:not(:disabled){background:rgba(200,235,255,0.95);border-color:#0090d0;color:#003a5c}
+body.t-underwater .explanation-card .exp-body{color:#222}
+body.t-underwater .explanation-card .exp-title{color:#1a1a2e}
+body.t-underwater .kanga-panel h3{color:#3a5068}
+body.t-underwater .timer-bar-wrap{background:rgba(0,60,100,0.2)}
+body.t-underwater .next-btn{background:linear-gradient(135deg,#0090c0,#006a90)}
+body.t-underwater .overlay-box{background:rgba(255,255,255,0.97);color:#1a1a2e}
+body.t-underwater .overlay-box p{color:#3a5068}
+body.t-underwater .overlay-box h2{color:#003a5c}
+body.t-underwater .overlay-box .final-score{color:#0080b0}
+body.t-underwater .overlay-box .sub-stat .val{color:#003a5c}
+body.t-underwater .overlay-box .sub-stat .lbl{color:#5a7a8a}
+body.t-underwater .name-input{background:rgba(255,255,255,0.9);color:#1a1a2e;border-color:rgba(0,80,140,0.3)}
+body.t-underwater .stat-box{background:rgba(255,255,255,.18)}
+body.t-farm{--card-a:rgba(255,255,255,0.9);--bg:transparent}
+body.t-farm .header{background:linear-gradient(135deg,rgba(34,80,20,0.9),rgba(60,120,40,0.9))}
+body.t-sky{--card-a:rgba(255,255,255,0.88);--bg:transparent}
+body.t-sky .header{background:linear-gradient(135deg,rgba(30,90,170,0.9),rgba(60,140,220,0.9))}
+body.t-outerspace{--card-a:rgba(20,20,40,0.9);--border:rgba(255,255,255,0.12);--text:#e0e0f0;--text-light:#9090b0;--bg:transparent}
+body.t-outerspace .header{background:linear-gradient(135deg,rgba(15,10,40,0.95),rgba(30,10,60,0.95))}
+body.t-outerspace .sentence-card,body.t-outerspace .kanga-panel{background:var(--card-a);border-color:var(--border)}
+body.t-outerspace .choice-btn{background:rgba(20,20,50,0.85);color:#e0e0f0;border-color:var(--border)}
+body.t-outerspace .choice-btn:hover:not(:disabled){background:rgba(60,60,120,0.85);border-color:#7070ff}
+body.t-outerspace .overlay-box{background:rgba(15,15,35,0.97);color:#e0e0f0}
+body.t-outerspace .overlay-box p{color:#9090b0}
+body.t-outerspace .name-input{background:rgba(30,30,60,0.8);color:#e0e0f0;border-color:rgba(255,255,255,0.15)}
+body.t-outerspace .explanation-card .exp-body{color:#c0c0d0}
+
+/* ═══ HEADER ═══ */
+.header{width:100%;background:var(--header-bg);color:var(--header-text);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.15);flex-wrap:wrap;gap:8px;position:relative;z-index:10}
+.header h1{font-size:19px;font-weight:800;letter-spacing:.5px}
+.header-left{display:flex;align-items:center;gap:12px}
+.exit-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:var(--header-text);font-size:12px;font-weight:700;padding:5px 14px;border-radius:8px;cursor:pointer;display:none;align-items:center;gap:5px;transition:background .2s,transform .15s;letter-spacing:.3px;font-family:inherit}
+.exit-btn:hover{background:rgba(255,70,70,.55);transform:scale(1.04)}
+.exit-btn:active{transform:scale(.96)}
+.exit-btn .exit-icon{font-size:14px;line-height:1}
+.player-tag{font-size:12px;font-weight:600;background:rgba(255,255,255,.14);padding:4px 12px;border-radius:20px;display:none}
+.header-stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stat-box{background:rgba(255,255,255,.12);border-radius:10px;padding:4px 12px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
+.stat-box .label{opacity:.75;font-weight:400}
+.streak-badge{display:none;align-items:center;gap:3px;background:var(--warning-bg);color:var(--warning);font-weight:800;font-size:12px;padding:3px 10px;border-radius:20px}
+.streak-badge.visible{display:inline-flex}
+
+/* ═══ MAIN LAYOUT ═══ */
+.game-container{display:flex;gap:22px;max-width:1060px;width:100%;padding:22px 16px;flex-wrap:wrap;justify-content:center;position:relative;z-index:10}
+
+/* ═══ KANGAROO PANEL ═══ */
+.kanga-panel{background:var(--card-a);border-radius:18px;border:1px solid var(--border);padding:18px;width:300px;display:flex;flex-direction:column;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,.05);backdrop-filter:blur(8px)}
+.kanga-panel h3{font-size:12px;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.kanga-svg{width:250px;height:330px}
+.lives-row{display:flex;gap:5px;margin-top:10px}
+.life-heart{font-size:22px;transition:all .3s}
+.life-heart.lost{opacity:.15;transform:scale(.75)}
+@keyframes idleSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(1.5deg)}}
+.kanga-svg .kanga-body{transform-origin:160px 55px;animation:idleSway 3s ease-in-out infinite}
+@keyframes hangSwing{0%{transform:rotate(0)}15%{transform:rotate(12deg)}30%{transform:rotate(-10deg)}45%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}75%{transform:rotate(4deg)}90%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
+.kanga-svg.swing .kanga-body{animation:hangSwing .9s ease forwards}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.shake{animation:shake .45s ease}
+@keyframes deadSpin{0%{transform:rotate(0)}100%{transform:rotate(8deg)}}
+.kanga-svg.dead .kanga-body{animation:deadSpin .6s ease forwards}
+
+/* ═══ QUESTION PANEL ═══ */
+.question-panel{flex:1;min-width:330px;max-width:600px;display:flex;flex-direction:column;gap:14px}
+.category-badge{display:inline-block;background:var(--primary-light);color:var(--primary);font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;text-transform:uppercase;letter-spacing:.8px}
+.sentence-card{background:var(--card-a);border-radius:18px;border:1px solid var(--border);padding:24px 26px;box-shadow:0 4px 20px rgba(0,0,0,.05);backdrop-filter:blur(8px)}
+.sentence-card .q-number{font-size:11px;color:var(--text-light);margin-bottom:5px}
+.sentence-text{font-size:19px;font-weight:600;line-height:1.65;margin-top:5px}
+.blank-slot{display:inline-block;min-width:80px;border-bottom:3px dashed var(--accent);color:var(--accent);font-weight:800;text-align:center;padding:0 4px;margin:0 2px}
+.choices-grid{display:flex;flex-wrap:wrap;gap:10px}
+.choice-btn{flex:1 1 45%;min-width:125px;padding:13px 16px;font-size:15px;font-weight:700;border:2px solid var(--border);border-radius:14px;background:var(--card-a);cursor:pointer;transition:all .2s;text-align:center;font-family:inherit;backdrop-filter:blur(6px)}
+.choice-btn:hover:not(:disabled){border-color:var(--accent);background:var(--primary-light);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,112,242,.15)}
+.choice-btn:disabled{cursor:default;opacity:.85}
+.choice-btn.correct{border-color:var(--success);background:var(--success-bg);color:var(--success)}
+.choice-btn.wrong{border-color:var(--danger);background:var(--danger-bg);color:var(--danger)}
+
+/* ═══ TIMER ═══ */
+.timer-bar-wrap{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.timer-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--primary));border-radius:4px;transition:width .25s linear}
+.timer-bar.danger{background:linear-gradient(90deg,#e53935,#ff7043)}
+.timer-text{font-size:12px;font-weight:700;color:var(--text-light);min-width:30px;text-align:right}
+.timer-text.danger{color:var(--danger);animation:pulse .5s ease infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.4}}
+
+/* ═══ EXPLANATION ═══ */
+.explanation-card{border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.7;display:none;animation:fadeSlide .35s ease;backdrop-filter:blur(6px)}
+.explanation-card.correct-exp{background:rgba(232,245,233,.95);border-left:4px solid var(--success)}
+.explanation-card.wrong-exp{background:rgba(255,235,238,.95);border-left:4px solid var(--danger)}
+.explanation-card .exp-title{font-weight:800;margin-bottom:5px;font-size:14px}
+.explanation-card .exp-rule{font-size:12px;color:#555;margin-top:5px;padding:7px 11px;background:rgba(0,0,0,.04);border-radius:8px;font-style:italic}
+.next-btn{align-self:flex-end;padding:11px 28px;font-size:14px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--primary));color:#fff;cursor:pointer;transition:all .2s;display:none;font-family:inherit}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,112,242,.3)}
+
+/* ═══ POPUPS & OVERLAYS ═══ */
+.points-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:44px;font-weight:900;pointer-events:none;z-index:100;opacity:0;text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.points-popup.show{animation:popPts .9s ease forwards}
+@keyframes popPts{0%{transform:translate(-50%,-50%) scale(0);opacity:0}30%{transform:translate(-50%,-50%) scale(1.3);opacity:1}70%{transform:translate(-50%,-70%) scale(1);opacity:1}100%{transform:translate(-50%,-90%) scale(.8);opacity:0}}
+.overlay{position:fixed;inset:0;background:rgba(0,20,74,.8);display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(6px)}
+.overlay.active{display:flex}
+.overlay-box{background:#fff;border-radius:24px;padding:40px 44px;text-align:center;max-width:500px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:fadeSlide .4s ease}
+.overlay-box h2{font-size:28px;font-weight:900;margin-bottom:6px}
+.overlay-box p{font-size:14px;color:var(--text-light);margin-bottom:6px;line-height:1.5}
+.overlay-box .final-score{font-size:48px;font-weight:900;color:var(--primary);margin:12px 0}
+.overlay-box .sub-stats{display:flex;gap:14px;justify-content:center;margin:10px 0 20px;flex-wrap:wrap}
+.overlay-box .sub-stat{text-align:center}
+.overlay-box .sub-stat .val{font-size:20px;font-weight:800;color:var(--dark)}
+.overlay-box .sub-stat .lbl{font-size:10px;color:var(--text-light)}
+.play-btn{padding:12px 36px;font-size:15px;font-weight:700;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--primary));color:#fff;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:4px}
+.play-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,112,242,.35)}
+.name-input{width:75%;max-width:260px;padding:9px 14px;font-size:15px;font-weight:600;border:2px solid var(--border);border-radius:12px;text-align:center;font-family:inherit;margin:5px 0 10px;outline:none;transition:border-color .2s}
+.name-input:focus{border-color:var(--accent)}
+.sound-toggle{position:fixed;bottom:16px;right:16px;z-index:50;background:var(--card-a);border:1px solid var(--border);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,.1);backdrop-filter:blur(6px)}
+
+/* ═══ THEME SELECTOR ═══ */
+.theme-picker{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.theme-opt{width:64px;height:52px;border-radius:12px;border:3px solid var(--border);cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px;position:relative;overflow:hidden}
+.theme-opt:hover{border-color:var(--accent);transform:translateY(-2px)}
+.theme-opt.active{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary)}
+.theme-opt span{font-size:8px;font-weight:700;color:var(--text-light);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.theme-opt.t-none{background:linear-gradient(135deg,#F4F6F9,#E1E2E6)}
+.theme-opt.t-uw{background:linear-gradient(180deg,#006994,#002233)}
+.theme-opt.t-uw span{color:#8CD}
+.theme-opt.t-farm{background:linear-gradient(180deg,#87CEEB 50%,#4A8F3C 50%)}
+.theme-opt.t-farm span{color:#fff}
+.theme-opt.t-sky{background:linear-gradient(180deg,#4CA1FF,#E0F0FF)}
+.theme-opt.t-sky span{color:#fff}
+.theme-opt.t-space{background:linear-gradient(180deg,#0a0a1a,#1a0a2e)}
+.theme-opt.t-space span{color:#aaa}
+
+.settings-row{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.settings-row label{font-size:12px;font-weight:600;color:var(--text-light)}
+.settings-row select{padding:5px 10px;border-radius:8px;border:1px solid var(--border);font-size:14px;font-weight:600;font-family:inherit}
+
+@keyframes fadeSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){.game-container{flex-direction:column;align-items:center}.kanga-panel{width:100%;max-width:350px}.question-panel{min-width:unset;width:100%}}
+</style>
+</head>
+<body>
+
+<!-- THEME BACKGROUND -->
+<div class="theme-bg" id="themeBg"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <button class="exit-btn" id="exitBtn" onclick="exitGame()" title="Exit to main menu"><span class="exit-icon">&#x2715;</span> Exit</button>
+    <h1>Hang-gramaroo</h1>
+    <span class="player-tag" id="playerTag"></span>
+  </div>
+  <div class="header-stats">
+    <span class="streak-badge" id="streakBadge">&#x1F525; <span id="streakVal">0</span> Streak</span>
+    <div class="stat-box"><span class="label">Score</span> <span id="scoreVal">0</span></div>
+    <div class="stat-box"><span class="label">Q</span> <span id="qProgress">0/0</span></div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="game-container" id="gameArea">
+  <div class="kanga-panel">
+    <h3>Hang-gramaroo Status</h3>
+    <svg class="kanga-svg" viewBox="0 0 260 340" id="kangaSvg">
+      <g id="gallows">
+        <rect x="20" y="295" width="220" height="8" rx="4" fill="#2c2c3e"/>
+        <rect x="56" y="28" width="8" height="272" rx="3" fill="#2c2c3e"/>
+        <rect x="56" y="26" width="112" height="7" rx="3" fill="#2c2c3e"/>
+        <line x1="64" y1="68" x2="98" y2="33" stroke="#2c2c3e" stroke-width="5" stroke-linecap="round"/>
+        <line x1="160" y1="33" x2="160" y2="56" stroke="#5a4a3a" stroke-width="3" stroke-linecap="round" stroke-dasharray="6,4"/>
+      </g>
+      <g class="kanga-body">
+        <g id="kPart1" style="display:none">
+          <ellipse cx="160" cy="80" rx="26" ry="24" fill="#C2883A" stroke="#8B5E3C" stroke-width="2"/>
+          <ellipse cx="160" cy="84" rx="18" ry="14" fill="#DEBB82"/>
+          <ellipse cx="140" cy="56" rx="8" ry="18" fill="#C2883A" stroke="#8B5E3C" stroke-width="1.5" transform="rotate(-12 140 56)"/>
+          <ellipse cx="140" cy="56" rx="5" ry="13" fill="#DEBB82" transform="rotate(-12 140 56)"/>
+          <ellipse cx="180" cy="56" rx="8" ry="18" fill="#C2883A" stroke="#8B5E3C" stroke-width="1.5" transform="rotate(12 180 56)"/>
+          <ellipse cx="180" cy="56" rx="5" ry="13" fill="#DEBB82" transform="rotate(12 180 56)"/>
+          <g id="eyesNormal"><circle cx="150" cy="76" r="4" fill="#fff"/><circle cx="150" cy="76" r="2.2" fill="#1a1a2e"/><circle cx="170" cy="76" r="4" fill="#fff"/><circle cx="170" cy="76" r="2.2" fill="#1a1a2e"/></g>
+          <g id="eyesBlink" style="display:none"><line x1="146" y1="76" x2="154" y2="76" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/><line x1="166" y1="76" x2="174" y2="76" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/></g>
+          <ellipse cx="160" cy="86" rx="3.5" ry="2.5" fill="#6B3A1F"/>
+          <path d="M155,91 Q160,96 165,91" fill="none" stroke="#6B3A1F" stroke-width="1.5" stroke-linecap="round" id="mouthNormal"/>
+          <path d="M153,90 Q160,99 167,90" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" id="mouthHappy" style="display:none"/>
+          <path d="M153,95 Q160,88 167,95" fill="none" stroke="#C62828" stroke-width="2" stroke-linecap="round" id="mouthSad" style="display:none"/>
+        </g>
+        <g id="kPart2" style="display:none"><ellipse cx="160" cy="155" rx="32" ry="52" fill="#C2883A" stroke="#8B5E3C" stroke-width="2"/><ellipse cx="160" cy="160" rx="22" ry="38" fill="#DEBB82"/></g>
+        <g id="kPart3" style="display:none"><path d="M130,128 Q110,145 100,160" fill="none" stroke="#C2883A" stroke-width="9" stroke-linecap="round"/><ellipse cx="97" cy="163" rx="6" ry="5" fill="#C2883A" stroke="#8B5E3C" stroke-width="1"/></g>
+        <g id="kPart4" style="display:none"><path d="M190,128 Q210,145 220,160" fill="none" stroke="#C2883A" stroke-width="9" stroke-linecap="round"/><ellipse cx="223" cy="163" rx="6" ry="5" fill="#C2883A" stroke="#8B5E3C" stroke-width="1"/></g>
+        <g id="kPart5" style="display:none"><path d="M142,200 Q128,235 118,260" fill="none" stroke="#C2883A" stroke-width="10" stroke-linecap="round"/><ellipse cx="108" cy="264" rx="16" ry="7" fill="#C2883A" stroke="#8B5E3C" stroke-width="1.5" transform="rotate(-8 108 264)"/></g>
+        <g id="kPart6" style="display:none"><path d="M178,200 Q192,235 202,260" fill="none" stroke="#C2883A" stroke-width="10" stroke-linecap="round"/><ellipse cx="212" cy="264" rx="16" ry="7" fill="#C2883A" stroke="#8B5E3C" stroke-width="1.5" transform="rotate(8 212 264)"/></g>
+        <g id="kPart7" style="display:none"><path d="M130,195 Q92,215 78,248 Q70,270 88,284" fill="none" stroke="#C2883A" stroke-width="9" stroke-linecap="round"/><circle cx="88" cy="287" r="5" fill="#C2883A" stroke="#8B5E3C" stroke-width="1"/></g>
+        <g id="kDead" style="display:none">
+          <line x1="145" y1="71" x2="155" y2="81" stroke="#C62828" stroke-width="3" stroke-linecap="round"/><line x1="155" y1="71" x2="145" y2="81" stroke="#C62828" stroke-width="3" stroke-linecap="round"/>
+          <line x1="165" y1="71" x2="175" y2="81" stroke="#C62828" stroke-width="3" stroke-linecap="round"/><line x1="175" y1="71" x2="165" y2="81" stroke="#C62828" stroke-width="3" stroke-linecap="round"/>
+          <path d="M153,95 Q160,88 167,95" fill="none" stroke="#C62828" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+      </g>
+    </svg>
+    <div class="lives-row" id="livesRow"></div>
+  </div>
+  <div class="question-panel">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span class="category-badge" id="catBadge">Category</span>
+      <div class="timer-bar-wrap" style="flex:1;min-width:100px;"><div class="timer-bar" id="timerBar" style="width:100%"></div></div>
+      <span class="timer-text" id="timerText">15s</span>
+    </div>
+    <div class="sentence-card">
+      <div class="q-number" id="qNum">Question 1 of 20</div>
+      <div class="sentence-text" id="sentenceText"></div>
+    </div>
+    <div class="choices-grid" id="choicesGrid"></div>
+    <div class="explanation-card" id="expCard">
+      <div class="exp-title" id="expTitle"></div>
+      <div class="exp-body" id="expBody"></div>
+      <div class="exp-rule" id="expRule"></div>
+    </div>
+    <button class="next-btn" id="nextBtn">Next Question &#x2192;</button>
+  </div>
+</div>
+
+<div class="points-popup" id="pointsPopup"></div>
+<div class="sound-toggle" id="soundToggle" title="Toggle Music">&#x1F50A;</div>
+
+<!-- START OVERLAY -->
+<div class="overlay active" id="startOverlay">
+  <div class="overlay-box" id="startBox">
+    <div style="font-size:56px;margin-bottom:4px;">&#x1F998;</div>
+    <h2>Hang-gramaroo</h2>
+    <p>Choose the correct word to complete each sentence.<br>Every wrong answer brings the kangaroo closer to danger!</p>
+    <p style="font-size:12px;margin-top:4px;"><strong>Scoring:</strong> 100 base + time bonus (up to 50) &times; streak multiplier (up to &times;5)</p>
+    <div style="margin-top:14px;">
+      <label style="font-size:12px;font-weight:600;color:var(--text-light);">Your Name</label><br>
+      <input class="name-input" id="playerNameInput" type="text" placeholder="Enter your name..." maxlength="24" autocomplete="off"/>
+    </div>
+    <label style="font-size:12px;font-weight:600;color:var(--text-light);">Choose Theme</label>
+    <div class="theme-picker" id="themePicker">
+      <div class="theme-opt t-none active" data-theme="none" onclick="selectTheme('none',this)">&#x1F4DD;<span>Classic</span></div>
+      <div class="theme-opt t-uw" data-theme="underwater" onclick="selectTheme('underwater',this)">&#x1F30A;<span>Ocean</span></div>
+      <div class="theme-opt t-farm" data-theme="farm" onclick="selectTheme('farm',this)">&#x1F33E;<span>Farm</span></div>
+      <div class="theme-opt t-sky" data-theme="sky" onclick="selectTheme('sky',this)">&#x2601;&#xFE0F;<span>Sky</span></div>
+      <div class="theme-opt t-space" data-theme="outerspace" onclick="selectTheme('outerspace',this)">&#x1F680;<span>Space</span></div>
+    </div>
+    <div class="settings-row">
+      <label>Questions&nbsp;<select id="qCountSelect">
+        <option value="10">10</option><option value="20" selected>20</option><option value="30">30</option>
+        <option value="50">50</option><option value="100">100</option><option value="999">All (203)</option>
+      </select></label>
+    </div>
+    <br>
+    <button class="play-btn" onclick="startGame()">Start Game</button>
+  </div>
+</div>
+
+<!-- END OVERLAY -->
+<div class="overlay" id="endOverlay">
+  <div class="overlay-box">
+    <div style="font-size:48px;margin-bottom:4px;" id="endEmoji">&#x1F998;</div>
+    <h2 id="endTitle">Game Over</h2>
+    <p id="endPlayerMsg" style="font-weight:700;color:var(--dark);font-size:16px;"></p>
+    <div class="final-score" id="endScore">0</div>
+    <p id="endMsg"></p>
+    <div class="sub-stats">
+      <div class="sub-stat"><div class="val" id="endCorrect">0</div><div class="lbl">Correct</div></div>
+      <div class="sub-stat"><div class="val" id="endWrong">0</div><div class="lbl">Wrong</div></div>
+      <div class="sub-stat"><div class="val" id="endBestStreak">0</div><div class="lbl">Best Streak</div></div>
+      <div class="sub-stat"><div class="val" id="endAccuracy">0%</div><div class="lbl">Accuracy</div></div>
+    </div>
+    <button class="play-btn" onclick="restartGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   QUESTION BANK — 203 QUESTIONS
+   ═══════════════════════════════════════ */
+const Q=[
+// ═ SUBJECT-VERB AGREEMENT (15)
+{cat:"Subject-Verb Agreement",before:"She ",after:" to school every day.",choices:["go","goes","going","gone"],answer:1,explain:"The subject 'She' is third-person singular, so the verb must agree: 'goes.' Base form 'go' is used with I/you/we/they.",rule:"Third-person singular subjects (he/she/it) take an '-s' or '-es' ending in simple present."},
+{cat:"Subject-Verb Agreement",before:"The dogs ",after:" loudly at night.",choices:["barks","bark","barking","has bark"],answer:1,explain:"'The dogs' is a plural subject, so it takes the base verb 'bark,' not the singular 'barks.'",rule:"Plural subjects use the base form (no '-s') in simple present."},
+{cat:"Subject-Verb Agreement",before:"Everyone ",after:" a chance to speak.",choices:["deserve","deserves","deserving","are deserving"],answer:1,explain:"'Everyone' is an indefinite pronoun treated as singular, so it takes 'deserves.'",rule:"Indefinite pronouns (everyone, someone, nobody, each, either, neither) are grammatically singular."},
+{cat:"Subject-Verb Agreement",before:"Neither the teacher nor the students ",after:" ready for the exam.",choices:["was","were","is","has been"],answer:1,explain:"With 'neither...nor,' the verb agrees with the nearer subject. 'Students' is plural, so 'were' is correct.",rule:"With 'either...or' / 'neither...nor,' the verb agrees with the subject closest to it (proximity rule)."},
+{cat:"Subject-Verb Agreement",before:"The committee ",after:" its decision yesterday.",choices:["announce","announces","announced","announcing"],answer:2,explain:"'Yesterday' signals past tense. The committee (singular collective noun) 'announced' its decision.",rule:"Collective nouns (committee, team, family) are typically singular in American English."},
+{cat:"Subject-Verb Agreement",before:"Each of the students ",after:" a textbook.",choices:["have","has","are having","having"],answer:1,explain:"'Each' is singular. Even though 'students' is plural, the true subject is 'each,' which takes 'has.'",rule:"'Each of...' / 'One of...' always takes a singular verb because the head word is singular."},
+{cat:"Subject-Verb Agreement",before:"Bread and butter ",after:" my favorite breakfast.",choices:["are","is","were","have been"],answer:1,explain:"When two nouns form a single concept (bread and butter as one dish), the compound subject takes a singular verb 'is.'",rule:"When a compound subject refers to a single entity, use a singular verb."},
+{cat:"Subject-Verb Agreement",before:"The news ",after:" shocking.",choices:["are","is","were","have been"],answer:1,explain:"'News' is an uncountable noun and always takes a singular verb: 'is.'",rule:"Some nouns ending in '-s' are uncountable/singular: news, mathematics, physics, economics."},
+{cat:"Subject-Verb Agreement",before:"Mathematics ",after:" my favorite subject.",choices:["are","is","were","have been"],answer:1,explain:"'Mathematics' looks plural but refers to a single academic discipline, so it takes 'is.'",rule:"Academic subjects ending in '-s' take singular verbs."},
+{cat:"Subject-Verb Agreement",before:"The pair of shoes ",after:" under the bed.",choices:["are","is","were","have been"],answer:1,explain:"'The pair' is the subject (singular), not 'shoes.' Therefore it takes 'is.'",rule:"'A pair of...' is grammatically singular — the verb agrees with 'pair.'"},
+{cat:"Subject-Verb Agreement",before:"There ",after:" many reasons to celebrate.",choices:["is","are","was","has been"],answer:1,explain:"In 'there + be' constructions, the verb agrees with the real subject that follows. 'Reasons' is plural, so 'are.'",rule:"In existential 'there is/are' sentences, the verb agrees with the noun after it."},
+{cat:"Subject-Verb Agreement",before:"A number of students ",after:" absent today.",choices:["is","are","was","has been"],answer:1,explain:"'A number of' means 'several/many' and takes a plural verb.",rule:"'A number of + plural noun' = plural verb. 'The number of + plural noun' = singular verb."},
+{cat:"Subject-Verb Agreement",before:"The number of participants ",after:" growing every year.",choices:["are","is","were","have been"],answer:1,explain:"'The number of' refers to the count itself (singular), so it takes 'is.'",rule:"'The number of...' is singular. 'A number of...' is plural."},
+{cat:"Subject-Verb Agreement",before:"Either the manager or his assistants ",after:" responsible for the report.",choices:["is","are","was","has been"],answer:1,explain:"With 'either...or,' the verb agrees with the nearer subject. 'Assistants' (plural) is closer, so 'are.'",rule:"With 'either...or' / 'neither...nor,' the verb matches the nearest subject."},
+{cat:"Subject-Verb Agreement",before:"Ten miles ",after:" a long distance to walk.",choices:["are","is","were","seem"],answer:1,explain:"When a plural number refers to a single unit of measurement, it takes a singular verb.",rule:"Amounts of money, time, distance, and weight take a singular verb when considered as one unit."},
+
+// ═ SIMPLE TENSES (15)
+{cat:"Simple Tenses",before:"I ",after:" a letter to my grandmother last week.",choices:["write","wrote","written","writing"],answer:1,explain:"'Last week' indicates past time, so the simple past 'wrote' is required.",rule:"Simple past for completed actions at a specific past time. Irregular: write → wrote."},
+{cat:"Simple Tenses",before:"We ",after:" football every Saturday.",choices:["plays","played","play","playing"],answer:2,explain:"'Every Saturday' signals a habitual action (simple present). 'We' takes the base form 'play.'",rule:"Simple present describes habits and routines. Base verb with I/you/we/they."},
+{cat:"Simple Tenses",before:"He ",after:" to London tomorrow.",choices:["fly","flies","flew","flown"],answer:1,explain:"Scheduled plans use simple present. Third-person 'He' takes 'flies.'",rule:"Scheduled future events (timetables) can use simple present tense."},
+{cat:"Simple Tenses",before:"They ",after:" a wonderful time at the party yesterday.",choices:["have","has","had","having"],answer:2,explain:"'Yesterday' requires simple past tense. 'They had' is correct.",rule:"Past time markers (yesterday, last week, ago) require simple past."},
+{cat:"Simple Tenses",before:"She always ",after:" her homework before dinner.",choices:["finish","finishes","finished","finishing"],answer:1,explain:"'Always' indicates a habit (simple present). Third-person 'She' requires 'finishes.'",rule:"Frequency adverbs (always, usually, often) signal simple present for habits."},
+{cat:"Simple Tenses",before:"The train ",after:" at 9 AM every morning.",choices:["depart","departs","departed","departing"],answer:1,explain:"Scheduled events use simple present. 'The train' takes 'departs.'",rule:"Timetabled events use simple present even for future reference."},
+{cat:"Simple Tenses",before:"I ",after:" my keys on the table yesterday.",choices:["leave","left","leaved","leaving"],answer:1,explain:"'Yesterday' signals past tense. Irregular: leave → left.",rule:"Many common verbs are irregular in past tense and must be memorized."},
+{cat:"Simple Tenses",before:"She ",after:" delicious meals every Sunday.",choices:["cook","cooks","cooked","cooking"],answer:1,explain:"'Every Sunday' = habitual present. Third-person 'She' takes 'cooks.'",rule:"Third-person singular + simple present = verb + '-s' or '-es.'"},
+{cat:"Simple Tenses",before:"The children ",after:" to the park every day.",choices:["goes","go","went","going"],answer:1,explain:"'Every day' = routine. Plural subject 'children' takes base form 'go.'",rule:"Plural subjects use the base verb in simple present — no '-s.'"},
+{cat:"Simple Tenses",before:"My father ",after:" a new car two months ago.",choices:["buys","buy","bought","buying"],answer:2,explain:"'Ago' = past time. Irregular: buy → bought.",rule:"'Ago' always signals simple past."},
+{cat:"Simple Tenses",before:"Water ",after:" at 100 degrees Celsius.",choices:["boil","boils","boiled","is boiling"],answer:1,explain:"Scientific facts use simple present. 'Water' = singular, takes 'boils.'",rule:"General truths and scientific facts always use simple present."},
+{cat:"Simple Tenses",before:"She ",after:" the piano when she was five.",choices:["learns","learn","learned","is learning"],answer:2,explain:"'When she was five' = past. 'Learned' is the simple past form.",rule:"'When + past clause' requires simple past in the main clause."},
+{cat:"Simple Tenses",before:"I ",after:" coffee every morning before work.",choices:["drinks","drink","drank","drinking"],answer:1,explain:"'Every morning' = present habit. First-person 'I' takes base form 'drink.'",rule:"First-person (I) uses the base verb in simple present — never add '-s.'"},
+{cat:"Simple Tenses",before:"The sun ",after:" in the east.",choices:["rise","rises","rose","rising"],answer:1,explain:"A universal truth. Third-person 'The sun' takes 'rises.'",rule:"Universal truths and natural laws always use simple present."},
+{cat:"Simple Tenses",before:"They ",after:" to Japan last summer.",choices:["travel","travels","traveled","traveling"],answer:2,explain:"'Last summer' = past. Regular: travel → traveled.",rule:"Regular verbs form past tense by adding '-ed.'"},
+
+// ═ PROGRESSIVE TENSES (14)
+{cat:"Progressive Tenses",before:"I ",after:" a book right now.",choices:["read","am reading","reads","have read"],answer:1,explain:"'Right now' = action happening at this moment: present continuous 'am reading.'",rule:"Present continuous (am/is/are + -ing) for actions happening now. Signals: right now, at the moment."},
+{cat:"Progressive Tenses",before:"They ",after:" dinner when the phone rang.",choices:["were eating","ate","are eating","have eaten"],answer:0,explain:"Ongoing past action interrupted by another event: past continuous 'were eating.'",rule:"Past continuous (was/were + -ing) for a background action interrupted by simple past."},
+{cat:"Progressive Tenses",before:"She ",after:" all morning, so she is tired.",choices:["is studying","has been studying","studies","studied"],answer:1,explain:"Action started in the past and continues with a present result: present perfect continuous 'has been studying.'",rule:"Present perfect continuous (has/have been + -ing) emphasizes duration of an ongoing action with a visible result."},
+{cat:"Progressive Tenses",before:"We ",after:" TV at 8 PM last night.",choices:["watch","watched","were watching","have watched"],answer:2,explain:"At a specific past moment: 'were watching.'",rule:"Past continuous for actions in progress at a specific past moment."},
+{cat:"Progressive Tenses",before:"Look! The children ",after:" in the park.",choices:["play","plays","are playing","played"],answer:2,explain:"'Look!' points to something happening now: 'are playing.'",rule:"'Look!', 'Listen!' signal present continuous."},
+{cat:"Progressive Tenses",before:"He ",after:" to music while he was cooking.",choices:["listens","listened","was listening","is listening"],answer:2,explain:"Two simultaneous past actions: 'was listening' while 'was cooking.'",rule:"'While' + past continuous = simultaneous past actions."},
+{cat:"Progressive Tenses",before:"At this time tomorrow, I ",after:" on the beach.",choices:["relax","will be relaxing","am relaxing","relaxed"],answer:1,explain:"Action in progress at a specific future time: future continuous 'will be relaxing.'",rule:"Future continuous (will be + -ing) for actions in progress at a future point."},
+{cat:"Progressive Tenses",before:"She ",after:" when I arrived at her house.",choices:["sleeps","was sleeping","is sleeping","has slept"],answer:1,explain:"Past action in progress interrupted by arrival: 'was sleeping.'",rule:"Past continuous + 'when' + simple past = interrupted action."},
+{cat:"Progressive Tenses",before:"Be quiet! The baby ",after:".",choices:["sleeps","is sleeping","slept","has slept"],answer:1,explain:"'Be quiet!' implies current action: 'is sleeping.'",rule:"Imperatives about current situations signal present continuous."},
+{cat:"Progressive Tenses",before:"It ",after:" when we left the office.",choices:["rains","is raining","was raining","has rained"],answer:2,explain:"Ongoing background condition at a past moment: 'was raining.'",rule:"Past continuous sets the scene for past events."},
+{cat:"Progressive Tenses",before:"I ",after:" for two hours when the bus finally came.",choices:["waited","was waiting","had been waiting","am waiting"],answer:2,explain:"Duration of an action before another past event: past perfect continuous 'had been waiting.'",rule:"Past perfect continuous (had been + -ing) emphasizes duration before another past event."},
+{cat:"Progressive Tenses",before:"Don't disturb me. I ",after:" on an important project.",choices:["work","am working","worked","works"],answer:1,explain:"Currently in progress: 'am working.'",rule:"Present continuous for temporary actions around the present moment."},
+{cat:"Progressive Tenses",before:"This time next week, we ",after:" through Europe.",choices:["travel","will be traveling","are traveled","traveled"],answer:1,explain:"Specific future moment: 'will be traveling.'",rule:"'This time next week/month' signals future continuous."},
+{cat:"Progressive Tenses",before:"While the teacher ",after:", the students were taking notes.",choices:["explained","was explaining","explains","is explaining"],answer:1,explain:"Simultaneous past actions: 'was explaining' while 'were taking.'",rule:"'While' connects two past continuous actions."},
+
+// ═ PERFECT TENSES (15)
+{cat:"Perfect Tenses",before:"I ",after:" that movie three times already.",choices:["see","saw","have seen","am seeing"],answer:2,explain:"'Already' with life experience: present perfect 'have seen.'",rule:"Present perfect (have/has + pp) for experiences up to now. Signals: already, yet, ever, never, just."},
+{cat:"Perfect Tenses",before:"She ",after:" her homework before she went out.",choices:["finished","has finished","had finished","finishes"],answer:2,explain:"Completed before another past action: past perfect 'had finished.'",rule:"Past perfect (had + pp) = the 'past of the past.' Shows which event happened first."},
+{cat:"Perfect Tenses",before:"By next July, we ",after:" in this city for ten years.",choices:["will live","will have lived","are living","lived"],answer:1,explain:"Future deadline: future perfect 'will have lived.'",rule:"Future perfect (will have + pp) for actions completed before a future time. Signal: 'by + future time.'"},
+{cat:"Perfect Tenses",before:"They ",after:" to Paris twice.",choices:["go","went","have been","had been"],answer:2,explain:"Life experiences up to now: present perfect 'have been.'",rule:"Present perfect for experiences without specifying when. If you say when, use simple past."},
+{cat:"Perfect Tenses",before:"He ",after:" the report by the time the boss arrived.",choices:["completed","has completed","had completed","completes"],answer:2,explain:"Finished before another past event: past perfect 'had completed.'",rule:"'By the time + simple past' triggers past perfect in the main clause."},
+{cat:"Perfect Tenses",before:"By the time you arrive, I ",after:" cooking dinner.",choices:["finish","will finish","will have finished","finished"],answer:2,explain:"Completed before a future event: future perfect 'will have finished.'",rule:"'By the time + present simple' triggers future perfect in the main clause."},
+{cat:"Perfect Tenses",before:"We ",after:" each other since childhood.",choices:["know","knew","have known","had known"],answer:2,explain:"'Since childhood' = started in past, continues now: present perfect 'have known.'",rule:"'Since + point in time' with present perfect = action continuing to the present."},
+{cat:"Perfect Tenses",before:"She had just ",after:" her lunch when I called.",choices:["finish","finished","finishing","finishes"],answer:1,explain:"Past perfect: 'had + past participle.' 'Had just finished.'",rule:"'Had just + pp' = action completed moments before another past event."},
+{cat:"Perfect Tenses",before:"I had never ",after:" sushi before I went to Japan.",choices:["try","tried","trying","tries"],answer:1,explain:"Experience absent before a past event: 'had never tried.'",rule:"Past perfect with 'never' expresses absence of experience before a past event."},
+{cat:"Perfect Tenses",before:"By 2030, scientists ",after:" a cure for the disease.",choices:["will find","will have found","are finding","found"],answer:1,explain:"Future deadline: 'will have found.'",rule:"Future perfect with 'by + year' shows anticipated completion."},
+{cat:"Perfect Tenses",before:"She ",after:" in London for five years now.",choices:["lives","lived","has lived","had lived"],answer:2,explain:"'For five years' + 'now' = past to present: 'has lived.'",rule:"Present perfect + 'for + duration' + now = action still true at time of speaking."},
+{cat:"Perfect Tenses",before:"The train ",after:" by the time we reached the station.",choices:["left","has left","had left","leaves"],answer:2,explain:"Earlier of two past events: past perfect 'had left.'",rule:"Past perfect shows which past event occurred first."},
+{cat:"Perfect Tenses",before:"I ",after:" this book yet.",choices:["didn't read","haven't read","hadn't read","don't read"],answer:1,explain:"'Yet' in a negative: present perfect 'haven't read.'",rule:"'Yet' signals present perfect in negatives and questions."},
+{cat:"Perfect Tenses",before:"By this time next year, she ",after:" her degree.",choices:["completes","will complete","will have completed","completed"],answer:2,explain:"Future deadline: 'will have completed.'",rule:"'By this time + future' triggers future perfect."},
+{cat:"Perfect Tenses",before:"He told me he ",after:" the movie before.",choices:["sees","saw","has seen","had seen"],answer:3,explain:"Reported speech shifts present perfect to past perfect: 'had seen.'",rule:"In reported speech, present perfect → past perfect: 'I have seen' → 'He said he had seen.'"},
+
+// ═ PARTICIPLES (15)
+{cat:"Participles",before:"The ",after:" book was on the table.",choices:["breaking","broken","broke","break"],answer:1,explain:"Past participle 'broken' acts as an adjective describing the book's state.",rule:"Past participles (-ed / irregular) act as adjectives: broken window, closed door, written report."},
+{cat:"Participles",before:"",after:" by the noise, the baby started crying.",choices:["Frighten","Frightened","Frightening","Frighteningly"],answer:1,explain:"'Frightened' describes the baby's emotional state — it received the action of being frightened.",rule:"-ED participles describe the receiver of a feeling: frightened, bored, excited."},
+{cat:"Participles",before:"The movie was really ",after:".",choices:["bored","boring","bore","boringly"],answer:1,explain:"'Boring' describes the thing causing the feeling. The movie causes boredom.",rule:"-ING participles describe the cause: boring movie, exciting news, confusing instructions."},
+{cat:"Participles",before:"I felt ",after:" after the long hike.",choices:["exhausting","exhausted","exhaust","exhausts"],answer:1,explain:"'Exhausted' describes the person's feeling — they experienced exhaustion.",rule:"-ED = how someone feels. -ING = what causes the feeling."},
+{cat:"Participles",before:"",after:" hard, she passed the exam with flying colors.",choices:["Study","Studied","Having studied","Studies"],answer:2,explain:"'Having studied' is a perfect participle showing completed action before the main clause.",rule:"Perfect participle (having + pp) shows an action completed before the main clause."},
+{cat:"Participles",before:"The ",after:" children ran to the playground.",choices:["excited","exciting","excite","excites"],answer:0,explain:"'Excited' describes the children's emotional state.",rule:"Use -ed form for how a person feels: excited children, tired workers."},
+{cat:"Participles",before:"This is the most ",after:" story I have ever heard.",choices:["interested","interesting","interest","interestingly"],answer:1,explain:"'Interesting' describes the story — it causes interest.",rule:"Use -ing form for what produces a feeling: interesting book, surprising result."},
+{cat:"Participles",before:"",after:" from the window, the landscape was breathtaking.",choices:["Seeing","Seen","See","Having see"],answer:1,explain:"'Seen from the window' uses past participle in a passive reduced clause.",rule:"Past participle phrases at the start have passive meaning: 'Seen from above' = 'When it was seen from above.'"},
+{cat:"Participles",before:"The ",after:" water was too hot to drink.",choices:["boil","boiled","boiling","boils"],answer:2,explain:"'Boiling' describes water that is actively boiling — ongoing action.",rule:"-ING as adjectives describe an ongoing characteristic: boiling water, running water."},
+{cat:"Participles",before:"",after:" by the scenery, she took many photos.",choices:["Amaze","Amazed","Amazing","Amazingly"],answer:1,explain:"'Amazed' describes her feeling — a reduced form of 'She was amazed by...'",rule:"Participial phrases must logically modify the subject: 'Amazed by X, she...'"},
+{cat:"Participles",before:"The instructions ",after:" in the manual are very clear.",choices:["providing","provided","provide","provides"],answer:1,explain:"'Provided in the manual' is a reduced relative clause with passive meaning.",rule:"Past participles in reduced relative clauses replace 'which is/are + pp.'"},
+{cat:"Participles",before:"The ",after:" news made everyone happy.",choices:["surprised","surprising","surprise","surprisingly"],answer:1,explain:"'Surprising' describes the news — it causes surprise.",rule:"-ING adjectives describe the source of a feeling."},
+{cat:"Participles",before:"She sat ",after:" by the fireplace, reading a book.",choices:["relaxing","relaxed","relax","relaxes"],answer:1,explain:"'Relaxed' describes her state while sitting.",rule:"Past participles describe a person's state: she sat relaxed, he stood frozen."},
+{cat:"Participles",before:"",after:" along the river, we enjoyed the scenery.",choices:["Walk","Walked","Walking","Walks"],answer:2,explain:"'Walking along the river' describes what we were doing simultaneously.",rule:"Present participle phrases show simultaneous actions."},
+{cat:"Participles",before:"The ",after:" passengers waited for the delayed flight.",choices:["frustrate","frustrated","frustrating","frustrates"],answer:1,explain:"'Frustrated' describes the passengers' emotional state.",rule:"People feel -ED emotions; things/events are -ING."},
+
+// ═ CONJUNCTIONS (15)
+{cat:"Conjunctions",before:"I wanted to go outside, ",after:" it was raining heavily.",choices:["but","and","so","or"],answer:0,explain:"'But' shows contrast: wanting to go vs. rain preventing it.",rule:"'But' connects contrasting ideas. FANBOYS: For, And, Nor, But, Or, Yet, So."},
+{cat:"Conjunctions",before:"She studied hard ",after:" she could pass the exam.",choices:["but","although","so that","or"],answer:2,explain:"'So that' introduces purpose — studying for the purpose of passing.",rule:"'So that' = purpose (in order to). 'So' alone = result."},
+{cat:"Conjunctions",before:"",after:" he was tired, he continued working.",choices:["Although","Because","So","And"],answer:0,explain:"'Although' introduces a concession — despite tiredness, he continued.",rule:"'Although/Though/Even though' introduce concession — an unexpected result."},
+{cat:"Conjunctions",before:"You can have tea ",after:" coffee.",choices:["and","but","or","because"],answer:2,explain:"'Or' presents alternatives — choose tea or coffee.",rule:"'Or' = choices. 'And' = addition. 'But' = contrast."},
+{cat:"Conjunctions",before:"I will stay home ",after:" I am not feeling well.",choices:["because","although","but","or"],answer:0,explain:"'Because' introduces the reason for staying home.",rule:"'Because' answers 'Why?' Other causal conjunctions: since, as."},
+{cat:"Conjunctions",before:"He ran fast; ",after:", he missed the bus.",choices:["however","therefore","moreover","although"],answer:0,explain:"'However' shows contrast between independent clauses.",rule:"'However' = contrast. Preceded by semicolon/period, followed by comma."},
+{cat:"Conjunctions",before:"",after:" it rains tomorrow, the event will be canceled.",choices:["If","Although","Because","While"],answer:0,explain:"'If' introduces a condition.",rule:"'If' introduces conditions. First conditional: If + present, will + base verb."},
+{cat:"Conjunctions",before:"She is smart ",after:" hardworking.",choices:["or","as well as","yet","nor"],answer:1,explain:"'As well as' adds complementary information.",rule:"'As well as' = 'in addition to.'"},
+{cat:"Conjunctions",before:"Neither the manager ",after:" the employees attended the meeting.",choices:["or","and","nor","but"],answer:2,explain:"'Neither...nor' is a correlative conjunction pair.",rule:"Correlative pairs: neither...nor, either...or, both...and, not only...but also."},
+{cat:"Conjunctions",before:"I waited for an hour, ",after:" she never showed up.",choices:["yet","because","so that","although"],answer:0,explain:"'Yet' shows unexpected contrast — despite waiting, she didn't come.",rule:"'Yet' = 'but' with emphasis on the unexpected."},
+{cat:"Conjunctions",before:"He works hard ",after:" he wants a promotion.",choices:["so","because","but","although"],answer:1,explain:"'Because' explains the reason behind his hard work.",rule:"'Because' gives the reason. 'So' gives the result."},
+{cat:"Conjunctions",before:"",after:" you study or not, the test will happen on Friday.",choices:["Whether","If","Although","Because"],answer:0,explain:"'Whether...or not' = regardless of either possibility.",rule:"'Whether...or not' = regardless of either option."},
+{cat:"Conjunctions",before:"She speaks French ",after:" she lived in Paris for five years.",choices:["so","because","but","yet"],answer:1,explain:"'Because' provides the reason she speaks French.",rule:"'Because' introduces the cause; the effect is in the main clause."},
+{cat:"Conjunctions",before:"Not only does he sing, ",after:" he also plays guitar.",choices:["and","but","or","yet"],answer:1,explain:"'Not only...but also' emphasizes both talents.",rule:"'Not only...but also' adds emphasis to both parts."},
+{cat:"Conjunctions",before:"I will go to the party ",after:" I finish my work.",choices:["after","although","but","or"],answer:0,explain:"'After' establishes the time sequence.",rule:"Time conjunctions (after, before, when, while, until) connect clauses and establish order."},
+
+// ═ ADVERBS (15)
+{cat:"Adverbs",before:"She sings ",after:".",choices:["beautiful","beautifully","beautiness","beauty"],answer:1,explain:"'Beautifully' (adverb) describes how she sings. 'Beautiful' is an adjective.",rule:"Adverbs modify verbs. Most: adjective + '-ly': beautiful → beautifully."},
+{cat:"Adverbs",before:"He ",after:" finishes his work before the deadline.",choices:["always","never","seldom","rarely"],answer:0,explain:"'Always' = 100% frequency, fits the positive statement.",rule:"Frequency adverbs go between subject and main verb."},
+{cat:"Adverbs",before:"The children played ",after:" in the garden.",choices:["happy","happily","happiness","happier"],answer:1,explain:"'Happily' modifies the verb 'played.'",rule:"Manner adverbs answer 'How?': played happily, worked diligently."},
+{cat:"Adverbs",before:"She spoke ",after:" so everyone could understand.",choices:["clear","clearly","clearer","clearest"],answer:1,explain:"'Clearly' modifies the verb 'spoke.'",rule:"Use an adverb (not adjective) to modify a verb."},
+{cat:"Adverbs",before:"He drives very ",after:" on the highway.",choices:["careful","carefully","careless","caring"],answer:1,explain:"'Carefully' modifies the verb 'drives.'",rule:"'Drives' needs an adverb: 'carefully.'"},
+{cat:"Adverbs",before:"I have ",after:" been to Japan.",choices:["ever","never","always","often"],answer:1,explain:"'Never' + present perfect = experience has not occurred.",rule:"'Never' goes between 'have/has' and the past participle."},
+{cat:"Adverbs",before:"She ",after:" goes to the gym. Maybe once a year.",choices:["always","often","rarely","usually"],answer:2,explain:"'Rarely' = almost never, matching 'once a year.'",rule:"Frequency: always > usually > often > sometimes > rarely > never."},
+{cat:"Adverbs",before:"He ran ",after:" enough to catch the bus.",choices:["quick","fast","fastly","quicker"],answer:1,explain:"'Fast' works as both adjective and adverb. 'Fastly' doesn't exist.",rule:"Some adverbs keep the same form as adjectives: fast, hard, early, late."},
+{cat:"Adverbs",before:"She completed the project ",after:" than expected.",choices:["more quickly","most quickly","quicker","quickest"],answer:0,explain:"Comparing two things uses comparative: 'more quickly.'",rule:"Two+ syllable adverbs: 'more + adverb' for comparative."},
+{cat:"Adverbs",before:"He ",after:" agreed to help with the project.",choices:["immediate","immediately","immediacy","immediateness"],answer:1,explain:"'Immediately' modifies 'agreed' — tells when/how quickly.",rule:"Time adverbs answer 'When?': immediately, recently, already, soon."},
+{cat:"Adverbs",before:"The exam was ",after:" difficult.",choices:["extreme","extremely","extremity","extremeness"],answer:1,explain:"'Extremely' intensifies the adjective 'difficult.'",rule:"Degree adverbs modify adjectives: very, extremely, quite, rather."},
+{cat:"Adverbs",before:"She ",after:" waited for the results.",choices:["patient","patiently","patience","patients"],answer:1,explain:"'Patiently' describes the manner of waiting.",rule:"If you can ask 'How?' the answer is an adverb."},
+{cat:"Adverbs",before:"I can ",after:" hear you. Please speak louder.",choices:["hard","hardly","harder","hardest"],answer:1,explain:"'Hardly' = barely/almost not. Not 'in a hard manner.'",rule:"'Hard' (adverb) = with effort. 'Hardly' = barely. Different meanings!"},
+{cat:"Adverbs",before:"He arrived ",after:" for the meeting.",choices:["late","lately","latest","later"],answer:0,explain:"'Late' (adverb) = not on time. 'Lately' = recently (different meaning).",rule:"'Late' = not punctual. 'Lately' = recently. Don't confuse them."},
+{cat:"Adverbs",before:"The project is ",after:" finished.",choices:["near","nearly","nearing","nearest"],answer:1,explain:"'Nearly' = almost. It modifies the adjective 'finished.'",rule:"'Nearly' and 'almost' are interchangeable degree adverbs."},
+
+// ═ PRONOUNS (14)
+{cat:"Pronouns",before:"The teacher asked ",after:" to submit the assignment.",choices:["we","us","our","ours"],answer:1,explain:"After 'asked,' use object pronoun 'us.'",rule:"Object pronouns (me, us, him, her, them) follow verbs and prepositions."},
+{cat:"Pronouns",before:"This book is ",after:". I bought it last week.",choices:["my","mine","me","I"],answer:1,explain:"'Mine' stands alone (no noun after it).",rule:"Possessive adjectives (my, your) + noun. Possessive pronouns (mine, yours) stand alone."},
+{cat:"Pronouns",before:"",after:" is the person who called you?",choices:["Whom","Who","Whose","Which"],answer:1,explain:"'Who' = subject of the question (who performed the action).",rule:"'Who' = subject. 'Whom' = object. Test: substitute 'he' → 'who'; 'him' → 'whom.'"},
+{cat:"Pronouns",before:"She hurt ",after:" while climbing the tree.",choices:["her","herself","hers","she"],answer:1,explain:"Reflexive pronoun — subject and object are the same person.",rule:"Reflexive pronouns (myself, herself, themselves) when subject = object."},
+{cat:"Pronouns",before:"The students helped ",after:" with the project.",choices:["each other","themselves","each others","theirselves"],answer:0,explain:"'Each other' = reciprocal — they helped one another.",rule:"'Each other' = reciprocal. 'Themselves' = reflexive (self-directed)."},
+{cat:"Pronouns",before:"Is there ",after:" in the room?",choices:["someone","anyone","no one","everyone"],answer:1,explain:"'Anyone' is used in questions.",rule:"Positive → someone. Questions → anyone. Negative → anyone/no one."},
+{cat:"Pronouns",before:"The dog wagged ",after:" tail happily.",choices:["it's","its","their","his"],answer:1,explain:"'Its' (no apostrophe) = possessive. 'It's' = 'it is.'",rule:"'Its' = possessive. 'It's' = contraction of 'it is.' Very common error!"},
+{cat:"Pronouns",before:"",after:" of the students passed the exam.",choices:["Every","All","Each","Much"],answer:1,explain:"'All of the students' (plural) works with 'passed.'",rule:"'All of the + plural noun' = plural. 'Each of the + plural noun' = singular verb."},
+{cat:"Pronouns",before:"The manager ",after:" approved the budget is very strict.",choices:["who","whom","which","whose"],answer:0,explain:"'Who' introduces a relative clause about a person (subject).",rule:"'Who/whom' for people. 'Which' for things. 'Whose' for possession."},
+{cat:"Pronouns",before:"I need a pen with ",after:" I can write.",choices:["who","that","which","whose"],answer:2,explain:"'Which' for things after a preposition: 'with which.'",rule:"After prepositions: 'which' for things, 'whom' for people."},
+{cat:"Pronouns",before:"The woman ",after:" car was stolen reported it to the police.",choices:["who","whom","whose","which"],answer:2,explain:"'Whose' shows possession — the car belongs to the woman.",rule:"'Whose' = possessive relative pronoun for both people and things."},
+{cat:"Pronouns",before:"Let ",after:" know if you need any help.",choices:["I","me","my","mine"],answer:1,explain:"'Let' takes an object pronoun: 'let me.'",rule:"After 'let,' always use object pronouns: let me, let him, let them."},
+{cat:"Pronouns",before:"My sister and ",after:" went to the concert.",choices:["me","I","myself","mine"],answer:1,explain:"'I' = subject pronoun. Test: 'I went' (correct), not 'me went.'",rule:"Compound subjects use subject pronouns. Test by removing the other person."},
+{cat:"Pronouns",before:"The prize was given to my friend and ",after:".",choices:["I","me","myself","mine"],answer:1,explain:"After 'to,' use object pronoun: 'to me.'",rule:"After prepositions (to, for, with): use object pronouns."},
+
+// ═ PREPOSITIONS (15)
+{cat:"Prepositions",before:"She arrived ",after:" the airport at noon.",choices:["in","at","on","to"],answer:1,explain:"'At' for specific points of arrival: 'at the airport.'",rule:"'At' = specific points. 'In' = enclosed spaces. 'On' = surfaces."},
+{cat:"Prepositions",before:"We have class ",after:" Monday.",choices:["in","at","on","by"],answer:2,explain:"'On' + days of the week: 'on Monday.'",rule:"'On' + days/dates. 'In' + months/years/seasons. 'At' + clock times."},
+{cat:"Prepositions",before:"He has been waiting ",after:" two hours.",choices:["since","for","from","during"],answer:1,explain:"'For' + duration: 'for two hours.'",rule:"'For' + duration. 'Since' + starting point."},
+{cat:"Prepositions",before:"The cat jumped ",after:" the table.",choices:["at","onto","into","from"],answer:1,explain:"'Onto' = movement to a surface.",rule:"'Onto' = to a surface. 'Into' = inside. 'On' = already on surface."},
+{cat:"Prepositions",before:"I am interested ",after:" learning new languages.",choices:["on","at","in","for"],answer:2,explain:"'Interested in' is a fixed collocation.",rule:"Common collocations: interested in, good at, afraid of, responsible for."},
+{cat:"Prepositions",before:"She is good ",after:" mathematics.",choices:["in","at","on","for"],answer:1,explain:"'Good at' = skilled in something.",rule:"'Good at' = ability. 'Good for' = beneficial. 'Good with' = handles well."},
+{cat:"Prepositions",before:"They moved here ",after:" 2019.",choices:["on","at","in","for"],answer:2,explain:"'In' + years: 'in 2019.'",rule:"'In' + year, month, season, century."},
+{cat:"Prepositions",before:"I will meet you ",after:" 5 o'clock.",choices:["in","on","at","by"],answer:2,explain:"'At' + specific times: 'at 5 o'clock.'",rule:"'At' + exact time. 'In' + period. Exception: 'at night.'"},
+{cat:"Prepositions",before:"The book is ",after:" the shelf.",choices:["in","on","at","by"],answer:1,explain:"'On' = position on a surface.",rule:"'On' = touching a surface: on the table, on the wall, on the shelf."},
+{cat:"Prepositions",before:"She has been absent ",after:" Monday.",choices:["for","since","from","during"],answer:1,explain:"'Since' + point in time (Monday).",rule:"'Since' marks when something began. Pairs with perfect tenses."},
+{cat:"Prepositions",before:"We walked ",after:" the bridge to the other side.",choices:["through","across","along","over"],answer:1,explain:"'Across' = from one side to the other of a surface.",rule:"'Across' = side to side (surface). 'Through' = end to end (enclosed). 'Along' = following a path."},
+{cat:"Prepositions",before:"I will be there ",after:" ten minutes.",choices:["at","on","in","for"],answer:2,explain:"'In' + future duration = 'after that time from now.'",rule:"'In' + future duration: in five minutes, in two weeks."},
+{cat:"Prepositions",before:"She is afraid ",after:" spiders.",choices:["from","of","by","with"],answer:1,explain:"'Afraid of' = fixed collocation.",rule:"Common 'of' collocations: afraid of, tired of, proud of, aware of."},
+{cat:"Prepositions",before:"He apologized ",after:" being late.",choices:["about","for","of","with"],answer:1,explain:"'Apologize for' = standard collocation.",rule:"Verb + preposition: apologize for, depend on, believe in, agree with."},
+{cat:"Prepositions",before:"The meeting starts ",after:" 9 AM.",choices:["in","on","at","by"],answer:2,explain:"'At' for specific times: 'at 9 AM.'",rule:"All specific times use 'at': at 9 AM, at noon, at midnight."},
+
+// ═ MODALS (14)
+{cat:"Modals",before:"You ",after:" see a doctor. You look very pale.",choices:["should","can","might","shall"],answer:0,explain:"'Should' = strong advice/recommendation.",rule:"'Should' = advice. 'Must' = obligation. 'Can' = ability. 'Might' = possibility."},
+{cat:"Modals",before:"Students ",after:" wear uniforms to school.",choices:["must","can","should","might"],answer:0,explain:"'Must' = obligation/rule. Uniforms are mandatory.",rule:"'Must' = strong obligation (often external rules)."},
+{cat:"Modals",before:"She ",after:" speak three languages fluently.",choices:["can","must","should","shall"],answer:0,explain:"'Can' = ability.",rule:"'Can' for present ability. 'Could' for past ability."},
+{cat:"Modals",before:"It ",after:" rain later; take an umbrella just in case.",choices:["might","must","shall","can"],answer:0,explain:"'Might' = possibility.",rule:"Possibility: might/may (maybe) < could < should (likely) < must (almost certain)."},
+{cat:"Modals",before:"You ",after:" not park here. It is a no-parking zone.",choices:["must","should","may","might"],answer:0,explain:"'Must not' = prohibition.",rule:"'Must not' = forbidden. 'Don't have to' = not necessary (very different!)."},
+{cat:"Modals",before:"",after:" I borrow your pen, please?",choices:["May","Must","Should","Shall"],answer:0,explain:"'May I' = formal permission request.",rule:"Formality: 'May I?' > 'Could I?' > 'Can I?'"},
+{cat:"Modals",before:"He ",after:" have left already; the lights are off.",choices:["should","might","must","can"],answer:2,explain:"'Must have' + pp = strong deduction about the past.",rule:"Past deduction: 'must have + pp' (certain), 'might have + pp' (possible), 'can't have + pp' (impossible)."},
+{cat:"Modals",before:"You ",after:" to finish the report by Friday.",choices:["should","ought","might","could"],answer:1,explain:"'Ought to' = 'should.' Requires 'to' after it.",rule:"'Ought to' = 'should' (slightly more formal). Unique: requires 'to.'"},
+{cat:"Modals",before:"She ",after:" swim when she was three years old.",choices:["can","could","may","must"],answer:1,explain:"'Could' = past ability.",rule:"'Could' = general past ability. 'Was able to' = specific past achievement."},
+{cat:"Modals",before:"We ",after:" leave now or we will miss the train.",choices:["must","might","may","could"],answer:0,explain:"'Must' = urgent necessity.",rule:"'Must' for urgent necessity implies serious consequences if not done."},
+{cat:"Modals",before:"You ",after:" have told me earlier!",choices:["should","must","can","may"],answer:0,explain:"'Should have + pp' = regret/criticism about the past.",rule:"'Should have + pp' = you didn't do it, but it would have been better if you had."},
+{cat:"Modals",before:"",after:" you pass me the salt, please?",choices:["Could","Must","Should","Shall"],answer:0,explain:"'Could you' = polite request.",rule:"Polite requests: 'Could you?' / 'Would you?' > 'Can you?' / 'Will you?'"},
+{cat:"Modals",before:"They ",after:" not need to come to the office tomorrow.",choices:["will","should","can","must"],answer:0,explain:"'Will not need to' = future lack of necessity.",rule:"'Need not' / 'won't need to' = absence of necessity."},
+{cat:"Modals",before:"She ",after:" be at home now. I just saw her at the mall.",choices:["must","can't","shouldn't","wouldn't"],answer:1,explain:"'Can't' = impossibility based on evidence.",rule:"'Can't' for present deduction = impossible based on evidence."},
+
+// ═ CONDITIONALS (14)
+{cat:"Conditionals",before:"If I ",after:" rich, I would travel the world.",choices:["am","was","were","be"],answer:2,explain:"Second conditional: 'were' for all subjects (subjunctive mood).",rule:"Second conditional: If + were/past simple, would + base verb. Unreal present."},
+{cat:"Conditionals",before:"If it rains, we ",after:" stay indoors.",choices:["will","would","could","should"],answer:0,explain:"First conditional: 'will' for real future possibility.",rule:"First conditional: If + present, will + base verb. Real/likely future."},
+{cat:"Conditionals",before:"If she ",after:" earlier, she would not have missed the flight.",choices:["left","had left","leaves","would leave"],answer:1,explain:"Third conditional: 'had left' (past perfect in if-clause).",rule:"Third conditional: If + past perfect, would have + pp. Unreal past / regret."},
+{cat:"Conditionals",before:"I would help you if I ",after:" more time.",choices:["have","had","has","will have"],answer:1,explain:"Second conditional: simple past in if-clause for unreal present.",rule:"Second conditional if-clause uses simple past but refers to present/future."},
+{cat:"Conditionals",before:"If you heat water to 100°C, it ",after:".",choices:["boils","will boil","would boil","boiled"],answer:0,explain:"Zero conditional: both present simple. Scientific fact.",rule:"Zero conditional: If + present, present. Facts and things always true."},
+{cat:"Conditionals",before:"She would have passed if she ",after:" harder.",choices:["studies","studied","had studied","would study"],answer:2,explain:"Third conditional: past perfect in if-clause.",rule:"Third conditional = regret about the past. Both condition and result are contrary to fact."},
+{cat:"Conditionals",before:"If I ",after:" you, I would accept the offer.",choices:["am","was","were","be"],answer:2,explain:"'If I were you' = fixed expression for advice. Always 'were.'",rule:"'If I were you' is always 'were' (subjunctive), never 'was.'"},
+{cat:"Conditionals",before:"Unless you ",after:", you will fail the exam.",choices:["study","studied","will study","would study"],answer:0,explain:"'Unless' = 'if not.' Same structure: present simple.",rule:"'Unless' = 'if...not.' Same grammar as 'if.'"},
+{cat:"Conditionals",before:"If I had known about the party, I ",after:" attended.",choices:["will have","would have","had","could"],answer:1,explain:"Third conditional result: 'would have + pp.'",rule:"Third conditional result: would/could/might + have + pp."},
+{cat:"Conditionals",before:"If you ",after:" ice in the sun, it melts.",choices:["put","puts","will put","putting"],answer:0,explain:"Zero conditional: present simple in both clauses.",rule:"Zero conditional = always-true cause-and-effect."},
+{cat:"Conditionals",before:"She will call you as soon as she ",after:".",choices:["arrives","will arrive","arrived","would arrive"],answer:0,explain:"Time clauses use present simple for future meaning.",rule:"After when/as soon as/after/before/until: present simple, never 'will.'"},
+{cat:"Conditionals",before:"I wish I ",after:" speak French fluently.",choices:["can","could","will","may"],answer:1,explain:"'I wish + could' for unreal present abilities.",rule:"Wishes about present: 'I wish + past tense / could.'"},
+{cat:"Conditionals",before:"If only I ",after:" more careful with my money last year.",choices:["was","were","had been","have been"],answer:2,explain:"'If only + past perfect' = regret about the past.",rule:"'If only + past perfect' = deep regret, same as third conditional if-clause."},
+{cat:"Conditionals",before:"Provided that you ",after:" the rules, you can join the team.",choices:["follow","followed","will follow","following"],answer:0,explain:"'Provided that' = conditional, same grammar as 'if.'",rule:"'Provided that' / 'As long as' = if. Present simple in condition clause."},
+
+// ═ ARTICLES & DETERMINERS (14)
+{cat:"Articles & Determiners",before:"I saw ",after:" elephant at the zoo.",choices:["a","an","the","no article"],answer:1,explain:"'An' before vowel sounds. 'Elephant' starts with /ɛ/.",rule:"'A' before consonant sounds. 'An' before vowel sounds. Based on SOUND, not spelling."},
+{cat:"Articles & Determiners",before:"She is ",after:" honest person.",choices:["a","an","the","no article"],answer:1,explain:"'An' because 'honest' starts with vowel sound — silent 'h.'",rule:"Silent 'h': an honest, an hour, an honor. Pronounced 'h': a house, a hotel."},
+{cat:"Articles & Determiners",before:"",after:" sun rises in the east.",choices:["A","An","The","No article"],answer:2,explain:"'The' for unique things — only one sun.",rule:"'The' for unique/one-of-a-kind: the sun, the moon, the earth, the president."},
+{cat:"Articles & Determiners",before:"I need ",after:" water, please.",choices:["a","an","some","the"],answer:2,explain:"'Some' + uncountable nouns in requests.",rule:"'Some' + uncountable or plural countable. 'A/an' only with singular countable."},
+{cat:"Articles & Determiners",before:"There are not ",after:" chairs in the room.",choices:["much","many","a lot","some"],answer:1,explain:"'Many' + countable plural in negatives.",rule:"'Many' + countable. 'Much' + uncountable. 'A lot of' works with both."},
+{cat:"Articles & Determiners",before:"She does not have ",after:" money left.",choices:["many","much","a lot","few"],answer:1,explain:"'Much' + uncountable (money) in negatives.",rule:"In negatives/questions: 'much' + uncountable, 'many' + countable."},
+{cat:"Articles & Determiners",before:"Can I have ",after:" apple, please?",choices:["a","an","the","some"],answer:1,explain:"'An' before 'apple' (vowel sound /æ/).",rule:"Use 'a/an' when mentioning something for the first time."},
+{cat:"Articles & Determiners",before:"He is ",after:" best student in the class.",choices:["a","an","the","no article"],answer:2,explain:"'The' before superlatives — only one 'best.'",rule:"Always 'the' with superlatives: the best, the tallest, the most important."},
+{cat:"Articles & Determiners",before:"I saw ",after:" interesting documentary last night.",choices:["a","an","the","no article"],answer:1,explain:"'An' because 'interesting' starts with vowel sound /ɪ/.",rule:"Article agrees with SOUND of the next word: 'an interesting' (vowel), 'a beautiful' (consonant)."},
+{cat:"Articles & Determiners",before:"",after:" milk is good for your health.",choices:["A","An","The","No article"],answer:3,explain:"No article for general statements about substances.",rule:"No article for general uncountable/plural nouns: 'Water is essential,' 'Dogs are loyal.'"},
+{cat:"Articles & Determiners",before:"I have ",after:" homework to do tonight.",choices:["many","a few","a lot of","several"],answer:2,explain:"'Homework' is uncountable. 'A lot of' works with uncountable nouns.",rule:"'A lot of' is versatile — works with countable and uncountable."},
+{cat:"Articles & Determiners",before:"",after:" United States is a large country.",choices:["A","An","The","No article"],answer:2,explain:"'The' with country names containing States/Kingdom/Republic.",rule:"'The' with: plural countries, Republic/Kingdom/States names, rivers, oceans."},
+{cat:"Articles & Determiners",before:"There is ",after:" sugar in my coffee.",choices:["few","a few","little","a little"],answer:3,explain:"'A little' + uncountable = small positive amount.",rule:"'A little' = small amount (positive). 'Little' = almost none (negative)."},
+{cat:"Articles & Determiners",before:"",after:" children need love and care.",choices:["All","Every","Each","The all"],answer:0,explain:"'All' + plural noun for general statement.",rule:"'All + plural noun' = general. 'Every/Each + singular noun.'"},
+
+// ═ PASSIVE VOICE (14)
+{cat:"Passive Voice",before:"The cake ",after:" by my grandmother.",choices:["baked","was baked","is baking","bakes"],answer:1,explain:"Passive: subject receives the action. 'Was baked.'",rule:"Passive = be + past participle. Active: 'She baked.' Passive: 'It was baked.'"},
+{cat:"Passive Voice",before:"English ",after:" all over the world.",choices:["speaks","is spoken","is speaking","speak"],answer:1,explain:"Present passive: 'is spoken.' English is spoken by people.",rule:"Present simple passive: is/are + pp."},
+{cat:"Passive Voice",before:"The building ",after:" in 1990.",choices:["built","was built","is built","has built"],answer:1,explain:"Past passive with 'in 1990': 'was built.'",rule:"Past simple passive: was/were + pp."},
+{cat:"Passive Voice",before:"The homework must ",after:" before Friday.",choices:["submit","be submitted","submitted","submitting"],answer:1,explain:"Modal passive: 'must be + pp.'",rule:"Modal passive: modal + be + pp: must be done, can be seen, should be finished."},
+{cat:"Passive Voice",before:"A new hospital ",after:" in our town right now.",choices:["builds","is building","is being built","has built"],answer:2,explain:"Present continuous passive: 'is being built.'",rule:"Present continuous passive: is/are + being + pp."},
+{cat:"Passive Voice",before:"The letter ",after:" yesterday.",choices:["sent","was sent","is sent","sends"],answer:1,explain:"Past passive with 'yesterday': 'was sent.'",rule:"Choose tense of 'be' based on time signals: yesterday → was/were."},
+{cat:"Passive Voice",before:"The suspects ",after:" by the police last night.",choices:["arrested","were arrested","are arrested","have arrested"],answer:1,explain:"Past passive, plural: 'were arrested.'",rule:"Passive 'be' agrees with subject: singular → was/is, plural → were/are."},
+{cat:"Passive Voice",before:"This song ",after:" by millions of people.",choices:["loves","is loved","is loving","has loving"],answer:1,explain:"Present passive: 'is loved.'",rule:"Passive preferred when the action matters more than who does it."},
+{cat:"Passive Voice",before:"The results ",after:" next week.",choices:["will announce","will be announced","are announcing","announced"],answer:1,explain:"Future passive: 'will be announced.'",rule:"Future simple passive: will be + pp."},
+{cat:"Passive Voice",before:"The report ",after:" already.",choices:["has completed","has been completed","is completing","completes"],answer:1,explain:"Present perfect passive: 'has been completed.'",rule:"Present perfect passive: has/have + been + pp."},
+{cat:"Passive Voice",before:"All the cookies ",after:" by the children.",choices:["ate","eaten","were eaten","have eating"],answer:2,explain:"Past passive: 'were eaten.'",rule:"'By + agent' tells who performed the action (optional)."},
+{cat:"Passive Voice",before:"My car ",after:" at the moment.",choices:["repairs","is repairing","is being repaired","has repaired"],answer:2,explain:"'At the moment' = present continuous passive: 'is being repaired.'",rule:"'Right now / at the moment' + present continuous passive for ongoing actions."},
+{cat:"Passive Voice",before:"The windows ",after:" every week.",choices:["clean","are cleaned","is cleaned","cleaning"],answer:1,explain:"Habitual passive: 'are cleaned' (plural).",rule:"Regular passive routines: present simple passive."},
+{cat:"Passive Voice",before:"She ",after:" a beautiful necklace for her birthday.",choices:["gave","was gave","was given","is giving"],answer:2,explain:"Past passive: 'was given.'",rule:"Verbs with two objects can promote either to passive subject."},
+
+// ═ COMPARATIVES & SUPERLATIVES (14)
+{cat:"Comparatives & Superlatives",before:"She is ",after:" than her sister.",choices:["tall","taller","tallest","more tall"],answer:1,explain:"One-syllable: add '-er.' 'Taller' compares two people.",rule:"One-syllable: -er comparative, -est superlative. tall → taller → tallest."},
+{cat:"Comparatives & Superlatives",before:"This is the ",after:" movie I have ever watched.",choices:["good","better","best","most good"],answer:2,explain:"Irregular superlative: good → best.",rule:"Irregular: good → better → best, bad → worse → worst, far → farther → farthest."},
+{cat:"Comparatives & Superlatives",before:"The exam was ",after:" than I expected.",choices:["more difficult","most difficult","difficulter","difficult"],answer:0,explain:"Multi-syllable: 'more difficult.'",rule:"Two+ syllables: 'more' for comparative, 'most' for superlative."},
+{cat:"Comparatives & Superlatives",before:"He runs ",after:" of all the athletes.",choices:["fast","faster","the fastest","more fast"],answer:2,explain:"'Of all' = superlative. 'The fastest.'",rule:"Superlatives compare three+ items. Always use 'the.'"},
+{cat:"Comparatives & Superlatives",before:"My situation is ",after:" than yours.",choices:["bad","worse","worst","more bad"],answer:1,explain:"Irregular: bad → worse.",rule:"'Bad' is irregular: bad → worse → worst. Never 'more bad.'"},
+{cat:"Comparatives & Superlatives",before:"This puzzle is ",after:" than the last one.",choices:["easy","easier","easiest","more easy"],answer:1,explain:"'-y' endings: change to '-ier.' easy → easier.",rule:"Adjectives ending in '-y': -y → -ier (comparative), -y → -iest (superlative)."},
+{cat:"Comparatives & Superlatives",before:"Mount Everest is the ",after:" mountain in the world.",choices:["high","higher","highest","most high"],answer:2,explain:"'In the world' = superlative. One-syllable: '-est.'",rule:"'The + superlative + in/of': the tallest in the class, the best of all."},
+{cat:"Comparatives & Superlatives",before:"She is ",after:" intelligent than her classmates.",choices:["more","most","much","many"],answer:0,explain:"Four syllables: use 'more.'",rule:"Never add '-er' to 3+ syllable adjectives. Always 'more.'"},
+{cat:"Comparatives & Superlatives",before:"The more you practice, the ",after:" you become.",choices:["good","better","best","well"],answer:1,explain:"Parallel comparative: 'the more...the better.'",rule:"'The + comparative, the + comparative' = parallel increase."},
+{cat:"Comparatives & Superlatives",before:"This restaurant is ",after:" expensive than that one.",choices:["least","less","fewer","little"],answer:1,explain:"'Less' = opposite of 'more' for adjectives.",rule:"'Less + adjective' is opposite of 'more.' 'Fewer' is for countable nouns only."},
+{cat:"Comparatives & Superlatives",before:"Of the three brothers, Tom is the ",after:".",choices:["tall","taller","tallest","more tall"],answer:2,explain:"Three people = superlative: 'tallest.'",rule:"Two items → comparative. Three+ items → superlative."},
+{cat:"Comparatives & Superlatives",before:"This car is much ",after:" than the old one.",choices:["fast","faster","fastest","more fast"],answer:1,explain:"'Much' intensifies: 'much faster.'",rule:"Intensify comparatives with 'much,' 'far,' 'a lot': much better, far more interesting."},
+{cat:"Comparatives & Superlatives",before:"She is the ",after:" student in our school.",choices:["creative","more creative","most creative","creativer"],answer:2,explain:"'In our school' = superlative. Multi-syllable: 'the most creative.'",rule:"Multi-syllable superlative: 'the most + adjective.'"},
+{cat:"Comparatives & Superlatives",before:"Today is ",after:" than yesterday.",choices:["hot","hotter","hottest","more hot"],answer:1,explain:"CVC pattern: double final consonant. hot → hotter.",rule:"CVC ending: double final letter: hot → hotter, big → bigger, thin → thinner."},
+];
+
+/* ═══════════════════════════════════════
+   GAME STATE
+   ═══════════════════════════════════════ */
+let questions=[],qIndex=0,score=0,lives=7,maxLives=7;
+let streak=0,bestStreak=0,correctCount=0,wrongCount=0;
+let timerInterval=null,timeLeft=15,maxTime=15;
+let answered=false,playerName="Player",currentTheme="none";
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function escHtml(s){return s?s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+function rnd(a,b){return a+Math.random()*(b-a)}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+/* ═══════════════════════════════════════
+   THEME ENGINE
+   ═══════════════════════════════════════ */
+let themeIntervals=[];
+let themeElements=[];
+
+function clearTheme(){
+  themeIntervals.forEach(id=>clearInterval(id));
+  themeIntervals=[];
+  const bg=$('themeBg');
+  bg.className='theme-bg';
+  bg.innerHTML='';
+  document.body.className='';
+  themeElements=[];
+}
+
+function selectTheme(name,el){
+  currentTheme=name;
+  document.querySelectorAll('.theme-opt').forEach(o=>o.classList.remove('active'));
+  if(el) el.classList.add('active');
+  applyTheme(name);
+}
+
+function applyTheme(name){
+  clearTheme();
+  const bg=$('themeBg');
+  if(name==='none') return;
+  bg.classList.add(name==='underwater'?'underwater':name==='farm'?'farm':name==='sky'?'sky':'outerspace');
+  document.body.classList.add('t-'+name.replace('underwater','underwater').replace('outerspace','outerspace'));
+  if(name==='underwater') initUnderwater(bg);
+  else if(name==='farm') initFarm(bg);
+  else if(name==='sky') initSky(bg);
+  else if(name==='outerspace') initOuterspace(bg);
+}
+
+/* ── UNDERWATER ── */
+function initUnderwater(bg){
+  // light rays
+  for(let i=0;i<6;i++){
+    const r=document.createElement('div');
+    r.className='uw-ray';
+    r.style.left=(10+i*15)+'%';
+    r.style.setProperty('--r',(15+i*5)+'deg');
+    r.style.animationDelay=(i*0.7)+'s';
+    r.style.width=(2+Math.random()*3)+'px';
+    bg.appendChild(r);
+  }
+  // seaweed
+  const swColors=['#1B5E20','#2E7D32','#388E3C','#1B8A2A'];
+  for(let i=0;i<10;i++){
+    const s=document.createElement('div');
+    s.className='theme-el uw-seaweed';
+    const h=60+Math.random()*80;
+    s.style.cssText=`left:${5+i*10}%;width:${8+Math.random()*6}px;height:${h}px;background:${pick(swColors)};border-radius:40% 40% 0 0;opacity:0.6;animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s`;
+    bg.appendChild(s);
+  }
+  // spawn fish
+  function spawnFish(){
+    if(bg.querySelectorAll('.uw-fish').length>8)return;
+    const f=document.createElement('div');
+    const reverse=Math.random()>0.5;
+    f.className='theme-el uw-fish'+(reverse?' reverse':'');
+    const size=20+Math.random()*30;
+    const colors=['#FF6B6B','#4ECDC4','#45B7D1','#FDCB6E','#6C5CE7','#FF8A5C','#A8E6CF','#F78FB3','#5FC9F3','#FFA502'];
+    const c=pick(colors);
+    const c2=pick(colors);
+    const uid='f'+Date.now()+Math.floor(Math.random()*9999);
+    // ALL fish SVGs face RIGHT: eye on right, tail on left
+    f.innerHTML=`<svg width="${size*2}" height="${size}" viewBox="0 0 40 20">
+      <defs><linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c}" stop-opacity="0.9"/><stop offset="100%" stop-color="${c2}" stop-opacity="0.7"/></linearGradient></defs>
+      <polygon points="3,10 -3,3 -3,17" fill="${c}" opacity="0.7">
+        <animate attributeName="points" values="3,10 -3,3 -3,17;3,10 -2,5 -2,15;3,10 -3,3 -3,17" dur="0.8s" repeatCount="indefinite"/>
+      </polygon>
+      <ellipse cx="18" cy="10" rx="15" ry="8" fill="url(#${uid})"/>
+      <ellipse cx="18" cy="12" rx="10" ry="4" fill="rgba(255,255,255,0.15)"/>
+      <path d="M10,3 Q7,0 9,5" fill="${c}" opacity="0.45"/>
+      <path d="M10,17 Q7,20 9,15" fill="${c}" opacity="0.35"/>
+      <path d="M15,18 Q18,22 21,18" fill="${c}" opacity="0.35"/>
+      <circle cx="28" cy="8" r="3" fill="#fff"/>
+      <circle cx="29" cy="8" r="1.8" fill="#111"/>
+      <circle cx="29.8" cy="7.3" r="0.6" fill="#fff"/>
+      <path d="M32,10 Q34,10.5 33,11" fill="none" stroke="${c}" stroke-width="0.6" opacity="0.5"/>
+      <path d="M12,9 Q18,11 24,9" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+    </svg>`;
+    f.style.cssText=`${reverse?'right':'left'}:-80px;top:${15+Math.random()*60}%;animation-duration:${8+Math.random()*12}s`;
+    bg.appendChild(f);
+    f.addEventListener('animationend',()=>f.remove());
+  }
+  // spawn bubbles
+  function spawnBubble(){
+    if(bg.querySelectorAll('.uw-bubble').length>15)return;
+    const b=document.createElement('div');
+    b.className='theme-el uw-bubble';
+    const s=4+Math.random()*14;
+    b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;bottom:-20px;animation-duration:${6+Math.random()*8}s`;
+    bg.appendChild(b);
+    b.addEventListener('animationend',()=>b.remove());
+  }
+  // spawn jellyfish
+  function spawnJelly(){
+    if(bg.querySelectorAll('.uw-jelly').length>3)return;
+    const j=document.createElement('div');
+    j.className='theme-el uw-jelly';
+    const jc=pick(['rgba(200,150,255,0.4)','rgba(100,200,255,0.4)','rgba(255,180,200,0.35)','rgba(180,255,220,0.35)']);
+    const jc2=pick(['rgba(220,180,255,0.25)','rgba(140,220,255,0.25)','rgba(255,200,220,0.2)']);
+    j.innerHTML=`<svg width="44" height="65" viewBox="0 0 44 65">
+      <defs><radialGradient id="jg${Date.now()}"><stop offset="0%" stop-color="rgba(255,255,255,0.3)"/><stop offset="100%" stop-color="${jc}"/></radialGradient></defs>
+      <ellipse cx="22" cy="16" rx="18" ry="16" fill="url(#jg${Date.now()})"/>
+      <ellipse cx="22" cy="16" rx="12" ry="10" fill="${jc2}"/>
+      <ellipse cx="18" cy="14" rx="2" ry="2.5" fill="rgba(255,255,255,0.3)"/>
+      <path d="M6,22 Q8,38 4,55" stroke="${jc}" stroke-width="1.8" fill="none"><animate attributeName="d" values="M6,22 Q8,38 4,55;M6,22 Q10,40 8,55;M6,22 Q8,38 4,55" dur="2s" repeatCount="indefinite"/></path>
+      <path d="M14,24 Q16,42 12,60" stroke="${jc}" stroke-width="1.2" fill="none"><animate attributeName="d" values="M14,24 Q16,42 12,60;M14,24 Q18,44 16,60;M14,24 Q16,42 12,60" dur="2.3s" repeatCount="indefinite"/></path>
+      <path d="M22,26 Q22,44 22,62" stroke="${jc}" stroke-width="1" fill="none"><animate attributeName="d" values="M22,26 Q22,44 22,62;M22,26 Q24,46 20,62;M22,26 Q22,44 22,62" dur="1.8s" repeatCount="indefinite"/></path>
+      <path d="M30,24 Q28,42 32,60" stroke="${jc}" stroke-width="1.2" fill="none"><animate attributeName="d" values="M30,24 Q28,42 32,60;M30,24 Q26,44 28,60;M30,24 Q28,42 32,60" dur="2.1s" repeatCount="indefinite"/></path>
+      <path d="M38,22 Q36,38 40,55" stroke="${jc}" stroke-width="1.8" fill="none"><animate attributeName="d" values="M38,22 Q36,38 40,55;M38,22 Q34,40 36,55;M38,22 Q36,38 40,55" dur="1.9s" repeatCount="indefinite"/></path>
+      <ellipse cx="22" cy="16" rx="18" ry="16" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+    </svg>`;
+    j.style.cssText=`left:${Math.random()*90}%;bottom:-60px;animation-duration:${15+Math.random()*10}s`;
+    bg.appendChild(j);
+    j.addEventListener('animationend',()=>j.remove());
+  }
+  // spawn turtles — slow swimmers with paddling flippers
+  function spawnTurtle(){
+    if(bg.querySelectorAll('.uw-turtle').length>2)return;
+    const t=document.createElement('div');
+    const rev=Math.random()>0.5;
+    t.className='theme-el uw-turtle'+(rev?' reverse':'');
+    const sz=40+Math.random()*25;
+    const shellC=pick(['#5B8C5A','#3E7A43','#6B9E6B','#4A7A4A','#7BAF7B']);
+    const skinC=pick(['#6AAF6B','#5A9E5A','#7ABF7A']);
+    const uid='tu'+Date.now()+Math.floor(Math.random()*9999);
+    // turtle faces RIGHT: head on right, tail on left
+    t.innerHTML=`<svg width="${sz*2.2}" height="${sz}" viewBox="0 0 70 32">
+      <!-- shell -->
+      <ellipse cx="32" cy="16" rx="18" ry="12" fill="${shellC}" stroke="#3a5a3a" stroke-width="1"/>
+      <ellipse cx="32" cy="14" rx="14" ry="8" fill="none" stroke="#3a5a3a" stroke-width="0.5" opacity="0.5"/>
+      <path d="M24,10 Q32,6 40,10" fill="none" stroke="#3a5a3a" stroke-width="0.6" opacity="0.4"/>
+      <path d="M22,16 L42,16" fill="none" stroke="#3a5a3a" stroke-width="0.4" opacity="0.3"/>
+      <ellipse cx="28" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.08)"/>
+      <ellipse cx="36" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.06)"/>
+      <!-- head -->
+      <ellipse cx="54" cy="14" rx="7" ry="5.5" fill="${skinC}"/>
+      <circle cx="57" cy="12" r="1.5" fill="#222"/>
+      <circle cx="57.4" cy="11.6" r="0.5" fill="#fff"/>
+      <ellipse cx="60" cy="14" rx="1" ry="0.6" fill="#3a5a3a" opacity="0.5"/>
+      <path d="M56,16 Q58,17 56.5,17.5" fill="none" stroke="#3a5a3a" stroke-width="0.5" opacity="0.4"/>
+      <!-- front flipper top -->
+      <path d="M44,20 Q54,24 58,20" fill="${skinC}" opacity="0.8">
+        <animate attributeName="d" values="M44,20 Q54,24 58,20;M44,20 Q52,28 56,24;M44,20 Q54,24 58,20" dur="1.2s" repeatCount="indefinite"/>
+      </path>
+      <!-- front flipper bottom -->
+      <path d="M44,18 Q52,14 56,16" fill="${skinC}" opacity="0.6">
+        <animate attributeName="d" values="M44,18 Q52,14 56,16;M44,18 Q50,10 54,12;M44,18 Q52,14 56,16" dur="1.2s" repeatCount="indefinite"/>
+      </path>
+      <!-- rear flipper -->
+      <path d="M20,20 Q14,24 10,22" fill="${skinC}" opacity="0.7">
+        <animate attributeName="d" values="M20,20 Q14,24 10,22;M20,20 Q14,26 8,24;M20,20 Q14,24 10,22" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      <!-- tail -->
+      <path d="M14,16 Q8,15 6,16" fill="${skinC}" opacity="0.5"/>
+    </svg>`;
+    t.style.cssText=`${rev?'right':'left'}:-160px;top:${30+Math.random()*45}%;animation-duration:${18+Math.random()*14}s`;
+    bg.appendChild(t);
+    t.addEventListener('animationend',()=>t.remove());
+  }
+  // sea plants — corals at the ocean floor
+  function createCorals(){
+    const coralColors=['#FF6B8A','#FF8E72','#E85D75','#C44569','#F8A5C2','#F78FB3','#D35D8B','#FFA07A','#FF7043','#E85050'];
+    for(let i=0;i<8;i++){
+      const co=document.createElement('div');
+      co.className='theme-el uw-coral';
+      const cc=pick(coralColors);
+      const cc2=pick(coralColors);
+      const x=3+i*12+Math.random()*6;
+      const style=Math.floor(Math.random()*3);
+      let svg='';
+      if(style===0){
+        // branching coral
+        const h=30+Math.random()*35;
+        svg=`<svg width="40" height="${h}" viewBox="0 0 40 ${h}">
+          <path d="M20,${h} Q20,${h*0.5} 12,${h*0.2} Q8,${h*0.1} 6,0" stroke="${cc}" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M20,${h} Q22,${h*0.4} 30,${h*0.15} Q34,${h*0.05} 36,2" stroke="${cc}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M20,${h*0.6} Q16,${h*0.35} 10,${h*0.3}" stroke="${cc2}" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="6" cy="2" r="2.5" fill="${cc}" opacity="0.7"/>
+          <circle cx="36" cy="3" r="2" fill="${cc}" opacity="0.7"/>
+          <circle cx="10" cy="${h*0.3}" r="2" fill="${cc2}" opacity="0.6"/>
+        </svg>`;
+      } else if(style===1){
+        // fan coral
+        const h=25+Math.random()*30;
+        svg=`<svg width="44" height="${h}" viewBox="0 0 44 ${h}">
+          <path d="M22,${h} L22,${h*0.4}" stroke="#8B6840" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="22" cy="${h*0.25}" rx="18" ry="${h*0.25}" fill="none" stroke="${cc}" stroke-width="1.2" opacity="0.6"/>
+          <ellipse cx="22" cy="${h*0.25}" rx="13" ry="${h*0.18}" fill="none" stroke="${cc}" stroke-width="1" opacity="0.5"/>
+          <ellipse cx="22" cy="${h*0.25}" rx="8" ry="${h*0.12}" fill="${cc}" opacity="0.2"/>
+          <line x1="22" y1="${h*0.05}" x2="22" y2="${h*0.45}" stroke="${cc}" stroke-width="0.6" opacity="0.3"/>
+          <line x1="8" y1="${h*0.25}" x2="36" y2="${h*0.25}" stroke="${cc}" stroke-width="0.6" opacity="0.3"/>
+        </svg>`;
+      } else {
+        // tube/brain coral
+        const h=20+Math.random()*20;
+        svg=`<svg width="36" height="${h}" viewBox="0 0 36 ${h}">
+          <ellipse cx="12" cy="${h-8}" rx="8" ry="${h*0.4}" fill="${cc}" opacity="0.7"/>
+          <ellipse cx="24" cy="${h-6}" rx="7" ry="${h*0.35}" fill="${cc2}" opacity="0.65"/>
+          <ellipse cx="18" cy="${h-10}" rx="6" ry="${h*0.3}" fill="${cc}" opacity="0.55"/>
+          <ellipse cx="12" cy="${h-12}" rx="5" ry="3" fill="rgba(255,255,255,0.1)"/>
+          <ellipse cx="24" cy="${h-10}" rx="4" ry="2.5" fill="rgba(255,255,255,0.08)"/>
+        </svg>`;
+      }
+      co.innerHTML=svg;
+      co.style.cssText=`left:${x}%;opacity:${0.4+Math.random()*0.35}`;
+      bg.appendChild(co);
+    }
+  }
+  // kelp — tall swaying sea plants
+  function createKelp(){
+    const kelpColors=['#2E7D32','#388E3C','#1B5E20','#4CAF50','#2D6A2E','#3B7A3B'];
+    for(let i=0;i<6;i++){
+      const k=document.createElement('div');
+      k.className='theme-el uw-kelp';
+      const kc=pick(kelpColors);
+      const h=80+Math.random()*100;
+      const w=10+Math.random()*8;
+      const x=8+i*16+Math.random()*8;
+      const leaves=3+Math.floor(Math.random()*4);
+      let leafPaths='';
+      for(let l=0;l<leaves;l++){
+        const ly=h*0.2+l*(h*0.6/leaves);
+        const side=l%2===0?1:-1;
+        const lw=12+Math.random()*10;
+        leafPaths+=`<path d="M${w/2},${ly} Q${w/2+side*lw},${ly-8} ${w/2+side*lw*0.8},${ly+5}" fill="${kc}" opacity="0.5">
+          <animate attributeName="d" values="M${w/2},${ly} Q${w/2+side*lw},${ly-8} ${w/2+side*lw*0.8},${ly+5};M${w/2},${ly} Q${w/2+side*lw*0.8},${ly-4} ${w/2+side*lw*0.6},${ly+8};M${w/2},${ly} Q${w/2+side*lw},${ly-8} ${w/2+side*lw*0.8},${ly+5}" dur="${2+Math.random()*2}s" repeatCount="indefinite"/>
+        </path>`;
+      }
+      k.innerHTML=`<svg width="${w+30}" height="${h}" viewBox="0 0 ${w+30} ${h}">
+        <path d="M${w/2},${h} Q${w/2-3},${h*0.5} ${w/2+2},${h*0.2} Q${w/2},${h*0.1} ${w/2+1},0" stroke="${kc}" stroke-width="${w*0.4}" fill="none" stroke-linecap="round" opacity="0.7"/>
+        ${leafPaths}
+        <circle cx="${w/2+1}" cy="4" r="${2+Math.random()*2}" fill="${kc}" opacity="0.5"/>
+      </svg>`;
+      k.style.cssText=`left:${x}%;animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*2}s;opacity:${0.45+Math.random()*0.3}`;
+      bg.appendChild(k);
+    }
+  }
+  createCorals();
+  createKelp();
+  themeIntervals.push(setInterval(spawnFish,3000));
+  themeIntervals.push(setInterval(spawnBubble,600));
+  themeIntervals.push(setInterval(spawnJelly,8000));
+  themeIntervals.push(setInterval(spawnTurtle,12000));
+  spawnFish();spawnFish();spawnBubble();spawnBubble();spawnBubble();spawnTurtle();
+}
+
+/* ── FARM ── */
+function initFarm(bg){
+  // sun
+  const sun=document.createElement('div');
+  sun.className='farm-sun';
+  bg.appendChild(sun);
+  // clouds
+  function spawnCloud(){
+    if(bg.querySelectorAll('.farm-cloud').length>5)return;
+    const c=document.createElement('div');
+    c.className='theme-el farm-cloud';
+    const w=80+Math.random()*120;
+    c.style.cssText=`width:${w}px;height:${w*0.4}px;top:${5+Math.random()*25}%;left:-200px;animation-duration:${30+Math.random()*40}s;animation-delay:${Math.random()*10}s;opacity:${0.5+Math.random()*0.4}`;
+    bg.appendChild(c);
+  }
+  // birds (V shape)
+  function spawnBird(){
+    if(bg.querySelectorAll('.farm-bird').length>4)return;
+    const b=document.createElement('div');
+    b.className='theme-el farm-bird';
+    const bsz=18+Math.random()*12;
+    b.innerHTML=`<svg width="${bsz*2}" height="${bsz}" viewBox="0 0 30 16">
+      <path d="M15,10 Q8,2 0,6" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round">
+        <animate attributeName="d" values="M15,10 Q8,2 0,6;M15,10 Q8,6 0,10;M15,10 Q8,2 0,6" dur="0.6s" repeatCount="indefinite"/>
+      </path>
+      <path d="M15,10 Q22,2 30,6" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round">
+        <animate attributeName="d" values="M15,10 Q22,2 30,6;M15,10 Q22,6 30,10;M15,10 Q22,2 30,6" dur="0.6s" repeatCount="indefinite"/>
+      </path>
+      <ellipse cx="15" cy="10" rx="3" ry="2" fill="#333"/>
+    </svg>`;
+    b.style.cssText=`left:-60px;top:${8+Math.random()*20}%;animation-duration:${10+Math.random()*8}s`;
+    bg.appendChild(b);
+    b.addEventListener('animationend',()=>b.remove());
+  }
+  // animals — facing RIGHT (direction of walk)
+  const animalSvgs=[
+    // cow — detailed, facing right
+    `<svg width="80" height="55" viewBox="0 0 80 55">
+      <ellipse cx="40" cy="26" rx="24" ry="16" fill="#F5F5F5" stroke="#bbb" stroke-width="0.8"/>
+      <ellipse cx="38" cy="28" rx="14" ry="9" fill="#3a3a3a" opacity="0.2" transform="rotate(-10 38 28)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="5" fill="#3a3a3a" opacity="0.15"/>
+      <circle cx="65" cy="20" r="10" fill="#F5F5F5" stroke="#bbb" stroke-width="0.8"/>
+      <ellipse cx="72" cy="22" rx="5" ry="3.5" fill="#FFCCCC" stroke="#daa" stroke-width="0.5"/>
+      <ellipse cx="70" cy="22" rx="1.5" ry="1" fill="#222"/>
+      <ellipse cx="74" cy="22" rx="1.5" ry="1" fill="#222"/>
+      <circle cx="68" cy="17" r="2" fill="#222"/>
+      <circle cx="67.3" cy="16.5" r="0.6" fill="#fff"/>
+      <path d="M60,12 Q57,4 54,8" stroke="#F5F5F5" stroke-width="2.5" fill="#F5F5F5"/>
+      <path d="M70,12 Q73,4 76,8" stroke="#F5F5F5" stroke-width="2.5" fill="#F5F5F5"/>
+      <ellipse cx="54" cy="7.5" rx="2" ry="3" fill="#FFCCCC"/>
+      <ellipse cx="76" cy="7.5" rx="2" ry="3" fill="#FFCCCC"/>
+      <rect x="26" y="40" width="5" height="12" rx="2" fill="#F5F5F5" stroke="#bbb" stroke-width="0.5"/>
+      <rect x="35" y="40" width="5" height="12" rx="2" fill="#F5F5F5" stroke="#bbb" stroke-width="0.5"/>
+      <rect x="47" y="40" width="5" height="12" rx="2" fill="#F5F5F5" stroke="#bbb" stroke-width="0.5"/>
+      <rect x="56" y="40" width="5" height="12" rx="2" fill="#F5F5F5" stroke="#bbb" stroke-width="0.5"/>
+      <ellipse cx="28" cy="52" rx="3.5" ry="1.5" fill="#333"/>
+      <ellipse cx="37" cy="52" rx="3.5" ry="1.5" fill="#333"/>
+      <ellipse cx="49" cy="52" rx="3.5" ry="1.5" fill="#333"/>
+      <ellipse cx="58" cy="52" rx="3.5" ry="1.5" fill="#333"/>
+      <path d="M16,26 Q8,24 6,30 Q5,33 10,32" stroke="#F5F5F5" stroke-width="2" fill="none"/>
+      <ellipse cx="44" cy="38" rx="8" ry="4" fill="#FFD0D0" opacity="0.5"/>
+    </svg>`,
+    // chicken — detailed, facing right
+    `<svg width="45" height="45" viewBox="0 0 45 45">
+      <ellipse cx="20" cy="24" rx="13" ry="12" fill="#E8C77B"/>
+      <ellipse cx="20" cy="26" rx="10" ry="8" fill="#F5DEB3"/>
+      <path d="M8,20 Q4,24 7,28 Q5,30 8,30" fill="#D4A84B" opacity="0.6"/>
+      <circle cx="30" cy="14" r="8" fill="#E8C77B"/>
+      <circle cx="33" cy="12" r="2.2" fill="#222"/>
+      <circle cx="32.5" cy="11.4" r="0.7" fill="#fff"/>
+      <polygon points="38,14 44,12 44,16 38,15" fill="#E85030"/>
+      <path d="M28,6 Q30,0 32,3 Q34,0 33,6" fill="#E83030"/>
+      <ellipse cx="30" cy="6" rx="3" ry="2" fill="#E84040"/>
+      <path d="M36,18 Q38,20 36,22" fill="#E85030" opacity="0.7"/>
+      <line x1="18" y1="36" x2="15" y2="44" stroke="#E8803A" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="24" y1="36" x2="27" y2="44" stroke="#E8803A" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M12,44 L15,44 L17,42" stroke="#E8803A" stroke-width="1.5" fill="none"/>
+      <path d="M24,42 L27,44 L30,44" stroke="#E8803A" stroke-width="1.5" fill="none"/>
+      <path d="M7,22 Q3,18 5,15" stroke="#D4A84B" stroke-width="2" fill="none"/>
+      <path d="M8,28 Q3,30 4,26" fill="#D4A84B" opacity="0.4"/>
+    </svg>`,
+    // sheep — detailed, facing right, woolly
+    `<svg width="65" height="50" viewBox="0 0 65 50">
+      <circle cx="24" cy="18" r="6" fill="#ECECEC"/>
+      <circle cx="32" cy="14" r="6" fill="#F0F0F0"/>
+      <circle cx="40" cy="16" r="6" fill="#ECECEC"/>
+      <circle cx="20" cy="24" r="7" fill="#F0F0F0"/>
+      <circle cx="30" cy="22" r="8" fill="#ECECEC"/>
+      <circle cx="40" cy="24" r="7" fill="#F0F0F0"/>
+      <circle cx="26" cy="30" r="6" fill="#ECECEC"/>
+      <circle cx="36" cy="30" r="6" fill="#F0F0F0"/>
+      <circle cx="44" cy="28" r="5" fill="#ECECEC"/>
+      <circle cx="18" cy="28" r="5" fill="#F0F0F0"/>
+      <circle cx="52" cy="20" r="8" fill="#2a2a2a"/>
+      <circle cx="55" cy="18" r="2" fill="#333"/>
+      <circle cx="54.4" cy="17.5" r="0.6" fill="#fff"/>
+      <ellipse cx="58" cy="22" rx="3" ry="1.5" fill="#FFCCCC"/>
+      <path d="M47,12 Q45,6 43,9" stroke="#2a2a2a" stroke-width="2" fill="none"/>
+      <path d="M55,12 Q57,6 59,9" stroke="#2a2a2a" stroke-width="2" fill="none"/>
+      <rect x="22" y="35" width="4" height="12" rx="1.5" fill="#2a2a2a"/>
+      <rect x="30" y="35" width="4" height="12" rx="1.5" fill="#2a2a2a"/>
+      <rect x="38" y="35" width="4" height="12" rx="1.5" fill="#2a2a2a"/>
+      <rect x="46" y="35" width="4" height="12" rx="1.5" fill="#2a2a2a"/>
+      <ellipse cx="24" cy="47" rx="3" ry="1.2" fill="#1a1a1a"/>
+      <ellipse cx="32" cy="47" rx="3" ry="1.2" fill="#1a1a1a"/>
+      <ellipse cx="40" cy="47" rx="3" ry="1.2" fill="#1a1a1a"/>
+      <ellipse cx="48" cy="47" rx="3" ry="1.2" fill="#1a1a1a"/>
+    </svg>`,
+    // pig — detailed, facing right
+    `<svg width="60" height="48" viewBox="0 0 60 48">
+      <ellipse cx="28" cy="24" rx="20" ry="15" fill="#FFB6B0"/>
+      <ellipse cx="28" cy="26" rx="14" ry="10" fill="#FFC8C2" opacity="0.5"/>
+      <circle cx="50" cy="20" r="10" fill="#FFB6B0" stroke="#E89890" stroke-width="0.5"/>
+      <ellipse cx="55" cy="22" rx="6" ry="4.5" fill="#FF9A92" stroke="#E08880" stroke-width="0.5"/>
+      <ellipse cx="53" cy="22" rx="1.2" ry="1.5" fill="#CC6660"/>
+      <ellipse cx="57" cy="22" rx="1.2" ry="1.5" fill="#CC6660"/>
+      <circle cx="52" cy="16" r="2.5" fill="#222"/>
+      <circle cx="51.3" cy="15.5" r="0.7" fill="#fff"/>
+      <path d="M44,12 Q42,6 40,10" fill="#FFB6B0" stroke="#E89890" stroke-width="1"/>
+      <path d="M54,12 Q56,6 58,10" fill="#FFB6B0" stroke="#E89890" stroke-width="1"/>
+      <rect x="16" y="36" width="5" height="10" rx="2" fill="#FFB6B0" stroke="#E89890" stroke-width="0.5"/>
+      <rect x="26" y="36" width="5" height="10" rx="2" fill="#FFB6B0" stroke="#E89890" stroke-width="0.5"/>
+      <rect x="36" y="36" width="5" height="10" rx="2" fill="#FFB6B0" stroke="#E89890" stroke-width="0.5"/>
+      <rect x="44" y="36" width="5" height="10" rx="2" fill="#FFB6B0" stroke="#E89890" stroke-width="0.5"/>
+      <ellipse cx="18" cy="46" rx="3.5" ry="1.2" fill="#E89890"/>
+      <ellipse cx="28" cy="46" rx="3.5" ry="1.2" fill="#E89890"/>
+      <ellipse cx="38" cy="46" rx="3.5" ry="1.2" fill="#E89890"/>
+      <ellipse cx="46" cy="46" rx="3.5" ry="1.2" fill="#E89890"/>
+      <path d="M8,24 Q4,22 5,26 Q4,28 8,26" fill="#FFB6B0" stroke="#E89890" stroke-width="0.8"/>
+    </svg>`,
+    // horse — detailed, facing right
+    `<svg width="80" height="60" viewBox="0 0 80 60">
+      <ellipse cx="38" cy="28" rx="24" ry="16" fill="#8B6840"/>
+      <ellipse cx="38" cy="30" rx="16" ry="10" fill="#A07848" opacity="0.4"/>
+      <path d="M58,24 Q64,18 66,10 Q67,6 65,8 Q68,4 66,6 L66,14 Q66,20 62,24" fill="#8B6840"/>
+      <circle cx="66" cy="14" r="8" fill="#8B6840" stroke="#7A5A38" stroke-width="0.5"/>
+      <circle cx="70" cy="12" r="2" fill="#222"/>
+      <circle cx="69.4" cy="11.5" r="0.6" fill="#fff"/>
+      <ellipse cx="73" cy="16" rx="4" ry="2.5" fill="#7A5A38"/>
+      <ellipse cx="72" cy="16" rx="0.8" ry="1.2" fill="#333"/>
+      <path d="M62,6 Q60,0 58,4 Q56,0 57,5" fill="#3a2a18" stroke="none"/>
+      <path d="M66,8 L64,2" stroke="#3a2a18" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M58,8 Q54,2 56,8" fill="#3a2a18"/>
+      <rect x="24" y="42" width="5" height="16" rx="2" fill="#8B6840" stroke="#7A5A38" stroke-width="0.5"/>
+      <rect x="33" y="42" width="5" height="16" rx="2" fill="#8B6840" stroke="#7A5A38" stroke-width="0.5"/>
+      <rect x="44" y="42" width="5" height="16" rx="2" fill="#8B6840" stroke="#7A5A38" stroke-width="0.5"/>
+      <rect x="52" y="42" width="5" height="16" rx="2" fill="#8B6840" stroke="#7A5A38" stroke-width="0.5"/>
+      <ellipse cx="26" cy="58" rx="4" ry="1.5" fill="#333"/>
+      <ellipse cx="35" cy="58" rx="4" ry="1.5" fill="#333"/>
+      <ellipse cx="46" cy="58" rx="4" ry="1.5" fill="#333"/>
+      <ellipse cx="54" cy="58" rx="4" ry="1.5" fill="#333"/>
+      <path d="M14,28 Q6,26 4,32 Q2,38 8,36 Q4,40 10,38" stroke="#3a2a18" stroke-width="2" fill="none"/>
+    </svg>`,
+    // duck — detailed, facing right
+    `<svg width="40" height="38" viewBox="0 0 40 38">
+      <ellipse cx="18" cy="22" rx="14" ry="11" fill="#F5E6A0"/>
+      <ellipse cx="18" cy="24" rx="10" ry="7" fill="#FFF0B8" opacity="0.5"/>
+      <path d="M4,20 Q0,18 2,22 Q0,24 5,22" fill="#F5DCA0" opacity="0.7"/>
+      <circle cx="30" cy="14" r="8" fill="#F5E6A0"/>
+      <circle cx="33" cy="12" r="2" fill="#222"/>
+      <circle cx="32.4" cy="11.5" r="0.6" fill="#fff"/>
+      <path d="M36,15 L42,13 L42,17 L36,16 Z" fill="#E8943A"/>
+      <line x1="16" y1="33" x2="13" y2="38" stroke="#E8943A" stroke-width="2" stroke-linecap="round"/>
+      <line x1="22" y1="33" x2="25" y2="38" stroke="#E8943A" stroke-width="2" stroke-linecap="round"/>
+      <path d="M10,38 L13,38 L15,36" stroke="#E8943A" stroke-width="1.2" fill="none"/>
+      <path d="M22,36 L25,38 L28,38" stroke="#E8943A" stroke-width="1.2" fill="none"/>
+    </svg>`
+  ];
+  function spawnAnimal(){
+    if(bg.querySelectorAll('.farm-animal').length>3)return;
+    const a=document.createElement('div');
+    a.className='theme-el farm-animal';
+    a.innerHTML=pick(animalSvgs);
+    a.style.cssText=`left:-80px;animation-duration:${25+Math.random()*20}s`;
+    a.style.bottom=(4+Math.random()*8)+'%';
+    bg.appendChild(a);
+    a.addEventListener('animationend',()=>a.remove());
+  }
+  // butterflies
+  function spawnButterfly(){
+    if(bg.querySelectorAll('.farm-butterfly').length>4)return;
+    const bf=document.createElement('div');
+    bf.className='theme-el farm-butterfly';
+    const c=pick(['#FF69B4','#FFD700','#87CEEB','#FFA07A','#98FB98']);
+    bf.innerHTML=`<svg width="16" height="12" viewBox="0 0 16 12"><ellipse cx="4" cy="4" rx="4" ry="4" fill="${c}" opacity="0.7"><animate attributeName="ry" values="4;2;4" dur="0.3s" repeatCount="indefinite"/></ellipse><ellipse cx="12" cy="4" rx="4" ry="4" fill="${c}" opacity="0.7"><animate attributeName="ry" values="4;2;4" dur="0.3s" repeatCount="indefinite"/></ellipse><rect x="7" y="0" width="2" height="10" rx="1" fill="#333"/></svg>`;
+    bf.style.cssText=`left:-40px;top:${30+Math.random()*25}%;animation-duration:${12+Math.random()*8}s`;
+    bg.appendChild(bf);
+    bf.addEventListener('animationend',()=>bf.remove());
+  }
+  for(let i=0;i<4;i++) spawnCloud();
+  themeIntervals.push(setInterval(spawnCloud,12000));
+  themeIntervals.push(setInterval(spawnBird,6000));
+  themeIntervals.push(setInterval(spawnAnimal,8000));
+  themeIntervals.push(setInterval(spawnButterfly,5000));
+  spawnBird();spawnAnimal();spawnButterfly();
+}
+
+/* ── SKY ── */
+function initSky(bg){
+  // sun glow
+  const sg=document.createElement('div');
+  sg.className='sky-sunray';
+  bg.appendChild(sg);
+  // clouds (multiple layers)
+  function spawnSkyCloud(layer){
+    if(bg.querySelectorAll('.sky-cloud').length>8)return;
+    const c=document.createElement('div');
+    c.className='theme-el sky-cloud';
+    const w=100+Math.random()*200;
+    const speed=layer===0?(50+Math.random()*30):(25+Math.random()*20);
+    c.style.cssText=`width:${w}px;height:${w*0.35}px;top:${layer===0?(5+Math.random()*30):(35+Math.random()*25)}%;left:-250px;animation-duration:${speed}s;opacity:${layer===0?0.9:0.5};z-index:${layer}`;
+    bg.appendChild(c);
+  }
+  // birds
+  function spawnSkyBird(){
+    if(bg.querySelectorAll('.sky-bird').length>5)return;
+    const b=document.createElement('div');
+    b.className='theme-el sky-bird';
+    const s=14+Math.random()*10;
+    const bc=pick(['#2c2c3e','#444','#555','#333']);
+    b.innerHTML=`<svg width="${s*2.4}" height="${s}" viewBox="0 0 34 16">
+      <path d="M17,10 Q10,2 0,7" fill="none" stroke="${bc}" stroke-width="1.6" stroke-linecap="round">
+        <animate attributeName="d" values="M17,10 Q10,2 0,7;M17,10 Q10,7 0,11;M17,10 Q10,2 0,7" dur="0.7s" repeatCount="indefinite"/>
+      </path>
+      <path d="M17,10 Q24,2 34,7" fill="none" stroke="${bc}" stroke-width="1.6" stroke-linecap="round">
+        <animate attributeName="d" values="M17,10 Q24,2 34,7;M17,10 Q24,7 34,11;M17,10 Q24,2 34,7" dur="0.7s" repeatCount="indefinite"/>
+      </path>
+      <ellipse cx="17" cy="10" rx="4" ry="2.2" fill="${bc}" opacity="0.7"/>
+      <circle cx="19" cy="9.5" r="1" fill="${bc}" opacity="0.5"/>
+    </svg>`;
+    b.style.cssText=`left:-50px;top:${10+Math.random()*50}%;animation-duration:${8+Math.random()*10}s`;
+    bg.appendChild(b);
+    b.addEventListener('animationend',()=>b.remove());
+  }
+  for(let i=0;i<5;i++) spawnSkyCloud(i%2);
+  themeIntervals.push(setInterval(()=>spawnSkyCloud(Math.random()>.5?0:1),10000));
+  themeIntervals.push(setInterval(spawnSkyBird,4000));
+  spawnSkyBird();spawnSkyBird();
+}
+
+/* ── OUTERSPACE ── */
+function initOuterspace(bg){
+  // layer 1: tiny dim stars (200)
+  const starColors=['#fff','#fff','#fff','#CCE0FF','#FFEEDD','#DDDDFF','#FFEECC','#E0FFE0'];
+  for(let i=0;i<200;i++){
+    const s=document.createElement('div');
+    s.className='theme-el space-star';
+    const sz=0.5+Math.random()*1.8;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${pick(starColors)};animation-duration:${1.5+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    bg.appendChild(s);
+  }
+  // layer 2: medium bright stars (80)
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    const bright=Math.random()>0.6;
+    const colored=Math.random()>0.7;
+    s.className='theme-el space-star'+(bright?' bright':'')+(colored?' colored':'');
+    const sz=1.5+Math.random()*2.5;
+    const c=colored?pick(['#AAD4FF','#FFD4AA','#D4AAFF','#AAFFDD','#FFAACC']):'#fff';
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${c};color:${c};animation-duration:${1+Math.random()*3}s;animation-delay:${Math.random()*3}s`;
+    bg.appendChild(s);
+  }
+  // layer 3: cross / sparkle stars (30)
+  for(let i=0;i<30;i++){
+    const s=document.createElement('div');
+    s.className='theme-el space-star-cross';
+    const arm=4+Math.random()*8;
+    s.style.cssText=`--arm:${arm}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.5+Math.random()*3}s;animation-delay:${Math.random()*4}s`;
+    bg.appendChild(s);
+  }
+  // nebulae
+  const nebColors=['rgba(100,50,200,0.25)','rgba(50,100,200,0.2)','rgba(200,50,100,0.15)','rgba(50,180,150,0.15)'];
+  for(let i=0;i<3;i++){
+    const n=document.createElement('div');
+    n.className='theme-el space-nebula';
+    const sz=200+Math.random()*300;
+    n.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*80}%;top:${Math.random()*80}%;background:${pick(nebColors)};animation-delay:${i*4}s`;
+    bg.appendChild(n);
+  }
+  // planets
+  function spawnPlanet(){
+    if(bg.querySelectorAll('.space-planet').length>2)return;
+    const p=document.createElement('div');
+    p.className='theme-el space-planet';
+    const sz=30+Math.random()*50;
+    const colors=[
+      'radial-gradient(circle at 35% 35%,#E8A87C,#C0392B)',
+      'radial-gradient(circle at 35% 35%,#85C1E9,#2E86C1)',
+      'radial-gradient(circle at 35% 35%,#F9E79F,#D4AC0D)',
+      'radial-gradient(circle at 35% 35%,#A9DFBF,#27AE60)',
+      'radial-gradient(circle at 35% 35%,#D2B4DE,#7D3C98)'
+    ];
+    p.style.cssText=`width:${sz}px;height:${sz}px;background:${pick(colors)};left:-150px;top:${10+Math.random()*70}%;animation-duration:${40+Math.random()*30}s;box-shadow:inset -${sz*0.2}px -${sz*0.1}px ${sz*0.3}px rgba(0,0,0,0.4),0 0 ${sz*0.4}px rgba(255,255,255,0.05)`;
+    // ring for some
+    if(Math.random()>0.5){
+      const ring=document.createElement('div');
+      ring.style.cssText=`position:absolute;top:50%;left:50%;width:${sz*1.8}px;height:${sz*0.3}px;border:2px solid rgba(255,255,255,0.2);border-radius:50%;transform:translate(-50%,-50%) rotate(-20deg)`;
+      p.appendChild(ring);
+    }
+    bg.appendChild(p);
+  }
+  // shooting stars
+  function spawnShootStar(){
+    if(bg.querySelectorAll('.space-shootstar').length>2)return;
+    const s=document.createElement('div');
+    s.className='theme-el space-shootstar';
+    s.style.cssText=`width:${40+Math.random()*60}px;right:-60px;top:${Math.random()*50}%;animation-duration:${0.8+Math.random()*0.6}s`;
+    bg.appendChild(s);
+    s.addEventListener('animationend',()=>s.remove());
+  }
+  // asteroids
+  function spawnAsteroid(){
+    if(bg.querySelectorAll('.space-asteroid').length>3)return;
+    const a=document.createElement('div');
+    a.className='theme-el space-asteroid';
+    const sz=10+Math.random()*18;
+    a.style.cssText=`width:${sz}px;height:${sz*0.7}px;right:-100px;top:${Math.random()*80}%;animation-duration:${6+Math.random()*6}s`;
+    bg.appendChild(a);
+    a.addEventListener('animationend',()=>a.remove());
+  }
+  themeIntervals.push(setInterval(spawnPlanet,20000));
+  themeIntervals.push(setInterval(spawnShootStar,4000));
+  themeIntervals.push(setInterval(spawnAsteroid,5000));
+  spawnPlanet();spawnShootStar();
+}
+
+/* ═══════════════════════════════════════
+   MUSIC ENGINE — Web Audio API
+   ═══════════════════════════════════════ */
+let audioCtx=null,masterGain=null,compressor=null,reverbGain=null,musicPlaying=false,musicMuted=false;
+let heartbeatInterval=null,tensionLevel=0;
+let melodyTimer=null,chordTimer=null,bassTimer=null,ambientTimer=null,tickTimer=null;
+
+/* ── NOTE FREQUENCIES (C3-C6) ── */
+const N={
+  C3:130.81,D3:146.83,Eb3:155.56,E3:164.81,F3:174.61,G3:196.00,Ab3:207.65,A3:220.00,Bb3:233.08,B3:246.94,
+  C4:261.63,D4:293.66,Eb4:311.13,E4:329.63,F4:349.23,Fs4:369.99,G4:392.00,Ab4:415.30,A4:440.00,Bb4:466.16,B4:493.88,
+  C5:523.25,D5:587.33,Eb5:622.25,E5:659.26,F5:698.46,G5:783.99,A5:880.00,B5:987.77,
+  C6:1046.50
+};
+
+/* ── THEME SOUND PALETTES ── */
+const PALETTE={
+  none:{
+    calm:{melody:[N.C4,N.E4,N.G4,N.A4,N.C5,N.E5],chords:[[N.C4,N.E4,N.G4],[N.A3,N.C4,N.E4],[N.F3,N.A3,N.C4],[N.G3,N.B3,N.D4]],bass:[N.C3,N.C3,N.A3,N.F3,N.G3,N.G3]},
+    tense:{melody:[N.C4,N.Eb4,N.F4,N.G4,N.Bb4,N.C5],chords:[[N.C4,N.Eb4,N.G4],[N.Ab3,N.C4,N.Eb4],[N.Bb3,N.D4,N.F4]],bass:[N.C3,N.C3,N.Ab3,N.Bb3]},
+    melodyType:'sine',chordType:'sine',bassType:'triangle'
+  },
+  underwater:{
+    calm:{melody:[N.E4,N.G4,N.A4,N.B4,N.D5,N.E5],chords:[[N.E3,N.G3,N.B3],[N.A3,N.C4,N.E4],[N.D4,N.Fs4,N.A4],[N.G3,N.B3,N.D4]],bass:[N.E3,N.E3,N.A3,N.D3,N.G3,N.E3]},
+    tense:{melody:[N.E4,N.G4,N.Bb4,N.C5,N.Eb5],chords:[[N.E3,N.G3,N.Bb3],[N.C4,N.Eb4,N.G4],[N.A3,N.C4,N.Eb4]],bass:[N.E3,N.C3,N.A3,N.E3]},
+    melodyType:'sine',chordType:'sine',bassType:'sine'
+  },
+  farm:{
+    calm:{melody:[N.G4,N.A4,N.B4,N.D5,N.E5,N.G5],chords:[[N.G3,N.B3,N.D4],[N.C4,N.E4,N.G4],[N.D4,N.Fs4,N.A4],[N.E3,N.G3,N.B3]],bass:[N.G3,N.G3,N.C3,N.D3,N.E3,N.D3]},
+    tense:{melody:[N.G4,N.Bb4,N.C5,N.D5,N.F5],chords:[[N.G3,N.Bb3,N.D4],[N.C4,N.Eb4,N.G4],[N.F3,N.A3,N.C4]],bass:[N.G3,N.C3,N.F3,N.G3]},
+    melodyType:'triangle',chordType:'sine',bassType:'triangle'
+  },
+  sky:{
+    calm:{melody:[N.D5,N.E5,N.G5,N.A5,N.B5,N.D5],chords:[[N.D4,N.Fs4,N.A4],[N.G4,N.B4,N.D5],[N.A4,N.C5,N.E5],[N.E4,N.G4,N.B4]],bass:[N.D3,N.D3,N.G3,N.A3,N.E3,N.D3]},
+    tense:{melody:[N.D5,N.F5,N.G5,N.A5,N.C6],chords:[[N.D4,N.F4,N.A4],[N.G4,N.Bb4,N.D5],[N.C4,N.Eb4,N.G4]],bass:[N.D3,N.G3,N.C3,N.D3]},
+    melodyType:'sine',chordType:'sine',bassType:'sine'
+  },
+  outerspace:{
+    calm:{melody:[N.A4,N.C5,N.D5,N.E5,N.G5,N.A5],chords:[[N.A3,N.C4,N.E4],[N.D4,N.F4,N.A4],[N.E4,N.G4,N.B4],[N.C4,N.E4,N.A4]],bass:[N.A3,N.A3,N.D3,N.E3,N.C3,N.A3]},
+    tense:{melody:[N.A4,N.C5,N.Eb5,N.E5,N.G5],chords:[[N.A3,N.C4,N.Eb4],[N.D4,N.F4,N.Ab4],[N.E4,N.G4,N.Bb4]],bass:[N.A3,N.D3,N.E3,N.A3]},
+    melodyType:'sine',chordType:'sine',bassType:'sine'
+  }
+};
+
+/* ── Melody sequence patterns (scale-degree offsets, gives musicality) ── */
+const MELODY_SEQS=[
+  [0,1,2,3,4,3,2,1],      // ascending-descending
+  [0,2,1,3,2,4,3,5],      // step-skip
+  [0,0,2,2,4,4,3,1],      // repeated pairs
+  [4,3,2,1,0,1,2,3],      // descending-ascending
+  [0,2,4,2,0,3,5,3],      // arpeggiated wave
+  [0,4,2,5,1,3,0,2]       // jumpy
+];
+
+function initAudio(){
+  if(audioCtx)return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  compressor=audioCtx.createDynamicsCompressor();
+  compressor.threshold.value=-18;compressor.knee.value=12;compressor.ratio.value=8;
+  compressor.attack.value=0.003;compressor.release.value=0.15;
+  compressor.connect(audioCtx.destination);
+  // simple convolution-like reverb via delayed feedback
+  reverbGain=audioCtx.createGain();
+  reverbGain.gain.value=0.08;
+  const reverbDelay=audioCtx.createDelay(0.3);
+  reverbDelay.delayTime.value=0.12;
+  reverbGain.connect(reverbDelay);
+  reverbDelay.connect(compressor);
+  masterGain=audioCtx.createGain();
+  masterGain.gain.value=musicMuted?0:0.28;
+  masterGain.connect(compressor);
+  masterGain.connect(reverbGain);
+}
+
+/* ── Core tone player with ADSR envelope, vibrato, filter ── */
+function playTone(freq,type,dur,vol,delay){
+  if(!audioCtx||musicMuted||freq<=0)return;
+  const t=audioCtx.currentTime+(delay||0);
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  const flt=audioCtx.createBiquadFilter();
+  o.type=type||'sine';
+  o.frequency.setValueAtTime(freq,t);
+  // vibrato
+  const lfo=audioCtx.createOscillator();
+  const lfoG=audioCtx.createGain();
+  lfo.frequency.value=3+tensionLevel*5;
+  lfoG.gain.value=type==='sine'?(0.8+tensionLevel*4):0.5;
+  lfo.connect(lfoG);lfoG.connect(o.frequency);
+  lfo.start(t);lfo.stop(t+dur+0.05);
+  // lowpass filter — opens with tension
+  flt.type='lowpass';
+  flt.frequency.value=600+3000*(1-tensionLevel*0.4);
+  flt.Q.value=0.5+tensionLevel*2;
+  o.connect(flt);flt.connect(g);g.connect(masterGain);
+  // ADSR: attack 30ms, sustain at 60% dur, release
+  const v=vol||0.1;
+  const attack=0.03;
+  const sustEnd=t+dur*0.65;
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(v,t+attack);
+  g.gain.setValueAtTime(v*0.85,sustEnd);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.start(t);o.stop(t+dur+0.05);
+}
+
+/* ── Play a soft pad tone (longer, quieter, detuned pair) ── */
+function playPad(freq,dur,vol,delay){
+  if(!audioCtx||musicMuted)return;
+  playTone(freq,'sine',dur,vol,delay);
+  playTone(freq*1.003,'sine',dur,vol*0.35,(delay||0)+0.02);
+}
+
+function getPalette(){return PALETTE[currentTheme]||PALETTE.none;}
+function getSet(){return tensionLevel>0.5?getPalette().tense:getPalette().calm;}
+
+/* ═══ START MUSIC ═══ */
+function startMusic(){
+  if(!audioCtx)initAudio();
+  if(musicPlaying)return;
+  musicPlaying=true;
+  tensionLevel=0;
+
+  let melodySeqIdx=Math.floor(Math.random()*MELODY_SEQS.length);
+  let melodyPos=0;
+  let chordPos=0;
+  let bassPos=0;
+  let beatCount=0;
+
+  // ── MELODY: plays through melodic sequences ──
+  function tickMelody(){
+    if(!musicPlaying)return;
+    const pal=getPalette();
+    const set=getSet();
+    const seq=MELODY_SEQS[melodySeqIdx%MELODY_SEQS.length];
+    const deg=seq[melodyPos%seq.length];
+    const note=set.melody[deg%set.melody.length];
+    const speed=tensionLevel>0.6?0.12:tensionLevel>0.3?0.2:0.32;
+    const type=tensionLevel>0.65?'sawtooth':pal.melodyType;
+    const mvol=0.05+tensionLevel*0.03;
+    playTone(note,type,speed*2,mvol);
+    // harmony — a third above on every other note
+    if(melodyPos%2===0){
+      const harm=set.melody[(deg+2)%set.melody.length];
+      playTone(harm,'sine',speed*1.5,mvol*0.35,speed*0.3);
+    }
+    // high shimmer when tense
+    if(tensionLevel>0.55&&melodyPos%3===0){
+      playTone(note*2,'sine',speed*0.6,0.012,speed*0.1);
+    }
+    melodyPos++;
+    if(melodyPos%seq.length===0) melodySeqIdx++;
+    melodyTimer=setTimeout(tickMelody,tensionLevel>0.6?220:tensionLevel>0.3?380:550);
+  }
+
+  // ── CHORDS: sustained pads cycling through progression ──
+  function tickChord(){
+    if(!musicPlaying)return;
+    const set=getSet();
+    const chord=set.chords[chordPos%set.chords.length];
+    const dur=tensionLevel>0.5?1.8:3.0;
+    const cvol=0.028+tensionLevel*0.012;
+    chord.forEach((note,i)=>{
+      playPad(note,dur,cvol,i*0.06);
+    });
+    chordPos++;
+    chordTimer=setTimeout(tickChord,tensionLevel>0.5?2200:3600);
+  }
+
+  // ── BASS: rhythmic root notes ──
+  function tickBass(){
+    if(!musicPlaying)return;
+    const pal=getPalette();
+    const set=getSet();
+    const note=set.bass[bassPos%set.bass.length];
+    const btype=tensionLevel>0.5?'sawtooth':pal.bassType;
+    const bvol=0.08+tensionLevel*0.04;
+    playTone(note,btype,0.4+Math.random()*0.2,bvol);
+    // sub-octave when tense
+    if(tensionLevel>0.35) playTone(note*0.5,'sine',0.5,0.03);
+    bassPos++;
+    bassTimer=setTimeout(tickBass,tensionLevel>0.6?700:1400);
+  }
+
+  // ── AMBIENT: theme-specific texture ──
+  function tickAmbient(){
+    if(!musicPlaying)return;
+    const set=getSet();
+    if(currentTheme==='underwater'){
+      // 2-3 quick bubble pops
+      for(let i=0;i<2+Math.floor(Math.random()*2);i++){
+        const freq=600+Math.random()*1800;
+        playTone(freq,'sine',0.06,0.018,i*0.07);
+      }
+      // deep whale-like hum occasionally
+      if(Math.random()>0.7){
+        playTone(80+Math.random()*40,'sine',1.5,0.02);
+      }
+    } else if(currentTheme==='outerspace'){
+      // ethereal detuned pad sweep
+      const note=set.melody[Math.floor(Math.random()*set.melody.length)];
+      playPad(note*0.5,3,0.015,0);
+      playTone(note*2.005,'sine',2.5,0.008,0.1);
+      // distant twinkle
+      if(Math.random()>0.5){
+        const high=set.melody[set.melody.length-1]*2;
+        playTone(high,'sine',0.08,0.01,Math.random()*0.5);
+      }
+    } else if(currentTheme==='sky'){
+      // wind chime cluster
+      const notes=set.melody.slice(-3);
+      notes.forEach((n,i)=>{
+        playTone(n*2,'sine',0.3+Math.random()*0.2,0.012,i*0.12+Math.random()*0.1);
+      });
+    } else if(currentTheme==='farm'){
+      // gentle acoustic pluck pattern
+      const note=set.melody[Math.floor(Math.random()*3)];
+      playTone(note,'triangle',0.15,0.03);
+      playTone(note*1.5,'triangle',0.12,0.015,0.1);
+      // occasional bird chirp
+      if(Math.random()>0.6){
+        playTone(1800+Math.random()*600,'sine',0.04,0.01,0.3);
+        playTone(2000+Math.random()*400,'sine',0.03,0.008,0.38);
+      }
+    } else {
+      // default: soft bell
+      const note=set.melody[Math.floor(Math.random()*set.melody.length)];
+      playTone(note*2,'sine',0.25,0.015);
+    }
+    ambientTimer=setTimeout(tickAmbient,tensionLevel>0.5?1200:2500+Math.random()*2000);
+  }
+
+  // ── TENSION TICK: clock-like pulse when time is low ──
+  function tickClock(){
+    if(!musicPlaying)return;
+    if(tensionLevel>0.45){
+      const vol=0.03+tensionLevel*0.04;
+      playTone(800+tensionLevel*400,'square',0.02,vol);
+    }
+    tickTimer=setTimeout(tickClock,tensionLevel>0.7?300:500);
+  }
+
+  // stagger the start of each layer
+  melodyTimer=setTimeout(tickMelody,100);
+  chordTimer=setTimeout(tickChord,400);
+  bassTimer=setTimeout(tickBass,700);
+  ambientTimer=setTimeout(tickAmbient,1000);
+  tickTimer=setTimeout(tickClock,1500);
+}
+
+/* ═══ STOP MUSIC ═══ */
+function stopMusic(){
+  musicPlaying=false;
+  clearTimeout(melodyTimer);
+  clearTimeout(chordTimer);
+  clearTimeout(bassTimer);
+  clearTimeout(ambientTimer);
+  clearTimeout(tickTimer);
+  clearInterval(heartbeatInterval);
+  heartbeatInterval=null;
+}
+
+/* ═══ TENSION ═══ */
+function updateTension(timerPct){
+  tensionLevel=Math.max(0,1-timerPct);
+  // heartbeat at high tension
+  if(tensionLevel>0.65&&!heartbeatInterval){
+    const rate=Math.max(260,700-tensionLevel*450);
+    heartbeatInterval=setInterval(()=>{
+      if(!audioCtx||musicMuted)return;
+      const t=audioCtx.currentTime;
+      const v=0.15+tensionLevel*0.12;
+      // thump 1
+      const o1=audioCtx.createOscillator();const g1=audioCtx.createGain();
+      o1.type='sine';o1.frequency.setValueAtTime(55,t);o1.frequency.exponentialRampToValueAtTime(25,t+0.2);
+      o1.connect(g1);g1.connect(masterGain);
+      g1.gain.setValueAtTime(v,t);g1.gain.exponentialRampToValueAtTime(0.001,t+0.24);
+      o1.start(t);o1.stop(t+0.3);
+      // thump 2
+      const o2=audioCtx.createOscillator();const g2=audioCtx.createGain();
+      o2.type='sine';o2.frequency.setValueAtTime(48,t+0.22);o2.frequency.exponentialRampToValueAtTime(20,t+0.4);
+      o2.connect(g2);g2.connect(masterGain);
+      g2.gain.setValueAtTime(v*0.7,t+0.22);g2.gain.exponentialRampToValueAtTime(0.001,t+0.44);
+      o2.start(t+0.22);o2.stop(t+0.5);
+    },rate);
+  } else if(tensionLevel<=0.5&&heartbeatInterval){
+    clearInterval(heartbeatInterval);heartbeatInterval=null;
+  }
+}
+
+/* ═══ SFX ═══ */
+function playSfx(type){
+  if(!audioCtx||musicMuted)return;
+  if(type==='correct'){
+    // bright ascending major triad + octave
+    playTone(523.3,'sine',0.1,0.14);
+    playTone(659.3,'sine',0.1,0.11,0.08);
+    playTone(784.0,'sine',0.15,0.10,0.16);
+    playTone(1046.5,'sine',0.25,0.06,0.26);
+  } else if(type==='wrong'){
+    // descending dissonant buzz
+    playTone(220,'sawtooth',0.25,0.1);
+    playTone(195,'sawtooth',0.35,0.09,0.12);
+    playTone(160,'sawtooth',0.3,0.07,0.25);
+  } else if(type==='timeup'){
+    // urgent descending alarm
+    playTone(350,'square',0.1,0.1);
+    playTone(290,'square',0.1,0.1,0.12);
+    playTone(230,'square',0.15,0.1,0.24);
+    playTone(170,'square',0.3,0.12,0.36);
+  }
+}
+
+// Sound toggle
+$('soundToggle').addEventListener('click',()=>{
+  musicMuted=!musicMuted;
+  $('soundToggle').innerHTML=musicMuted?'&#x1F507;':'&#x1F50A;';
+  if(masterGain) masterGain.gain.value=musicMuted?0:0.28;
+});
+
+/* ═══════════════════════════════════════
+   KANGAROO BLINK
+   ═══════════════════════════════════════ */
+let blinkInterval=null;
+function startBlink(){
+  stopBlink();
+  blinkInterval=setInterval(()=>{
+    const en=$('eyesNormal'),eb=$('eyesBlink');
+    if(!en||!eb||en.style.display==='none')return;
+    en.style.display='none';eb.style.display='block';
+    setTimeout(()=>{en.style.display='block';eb.style.display='none';},150);
+  },3000+Math.random()*2000);
+}
+function stopBlink(){if(blinkInterval)clearInterval(blinkInterval);blinkInterval=null;}
+
+/* ═══════════════════════════════════════
+   GAME LOGIC
+   ═══════════════════════════════════════ */
+function startGame(){
+  initAudio();
+  playerName=$('playerNameInput').value.trim()||'Player';
+  $('playerTag').textContent=playerName;
+  $('playerTag').style.display='inline-block';
+  $('exitBtn').style.display='flex';
+  const count=parseInt($('qCountSelect').value);
+  questions=shuffle([...Q]).slice(0,Math.min(count,Q.length));
+  qIndex=0;score=0;lives=maxLives;streak=0;bestStreak=0;correctCount=0;wrongCount=0;
+  updateScore();updateLives();resetKangaroo();
+  $('startOverlay').classList.remove('active');
+  $('endOverlay').classList.remove('active');
+  applyTheme(currentTheme);
+  startMusic();startBlink();
+  showQuestion();
+}
+function restartGame(){
+  stopMusic();stopBlink();
+  $('endOverlay').classList.remove('active');
+  $('startOverlay').classList.add('active');
+  $('exitBtn').style.display='none';
+}
+function exitGame(){
+  if(!confirm('Exit the game and return to the main menu?')) return;
+  clearInterval(timerInterval);
+  stopMusic();stopBlink();
+  $('endOverlay').classList.remove('active');
+  $('startOverlay').classList.add('active');
+  $('exitBtn').style.display='none';
+  $('playerTag').style.display='none';
+}
+
+function showQuestion(){
+  if(qIndex>=questions.length||lives<=0){endGame();return;}
+  answered=false;
+  const q=questions[qIndex];
+  $('catBadge').textContent=q.cat;
+  $('qNum').textContent='Question '+(qIndex+1)+' of '+questions.length;
+  $('qProgress').textContent=(qIndex+1)+'/'+questions.length;
+  let html=escHtml(q.before)+'<span class="blank-slot" id="blankSlot">???</span>'+escHtml(q.after);
+  if(q.after2) html+=escHtml(q.after2);
+  $('sentenceText').innerHTML=html;
+  const grid=$('choicesGrid');grid.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';btn.textContent=c;
+    btn.onclick=()=>pickAnswer(i);
+    grid.appendChild(btn);
+  });
+  $('expCard').style.display='none';
+  $('nextBtn').style.display='none';
+  showFace('normal');
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timeLeft=maxTime;tensionLevel=0;
+  $('timerBar').style.width='100%';
+  $('timerBar').classList.remove('danger');
+  $('timerText').classList.remove('danger');
+  $('timerText').textContent=timeLeft+'s';
+  timerInterval=setInterval(()=>{
+    timeLeft-=0.25;
+    if(timeLeft<=0){clearInterval(timerInterval);timeLeft=0;if(!answered){playSfx('timeup');pickAnswer(-1);}}
+    const pct=timeLeft/maxTime;
+    $('timerBar').style.width=(pct*100)+'%';
+    $('timerText').textContent=Math.ceil(timeLeft)+'s';
+    if(pct<0.33){$('timerBar').classList.add('danger');$('timerText').classList.add('danger');}
+    else{$('timerBar').classList.remove('danger');$('timerText').classList.remove('danger');}
+    updateTension(pct);
+  },250);
+}
+
+function pickAnswer(idx){
+  if(answered)return;
+  answered=true;
+  clearInterval(timerInterval);
+  const q=questions[qIndex];
+  const btns=$('choicesGrid').querySelectorAll('.choice-btn');
+  const isCorrect=idx===q.answer;
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.answer) b.classList.add('correct');
+    if(i===idx&&!isCorrect) b.classList.add('wrong');
+  });
+  $('blankSlot').textContent=q.choices[q.answer];
+  $('blankSlot').style.borderBottomStyle='solid';
+  $('blankSlot').style.borderBottomColor=isCorrect?'var(--success)':'var(--danger)';
+  $('blankSlot').style.color=isCorrect?'var(--success)':'var(--danger)';
+  if(isCorrect){
+    correctCount++;streak++;
+    if(streak>bestStreak)bestStreak=streak;
+    const timeBonus=Math.round((timeLeft/maxTime)*50);
+    const streakMult=Math.min(streak,5);
+    const pts=(100+timeBonus)*streakMult;
+    score+=pts;
+    showPointsPopup('+'+pts,'var(--success)');
+    showFace('happy');playSfx('correct');
+  } else {
+    wrongCount++;streak=0;lives--;
+    revealKangarooPart(maxLives-lives);
+    if(lives<=0) showDeadFace();
+    updateLives();
+    showPointsPopup('-1 life','var(--danger)');
+    showFace('sad');playSfx('wrong');
+    const svg=$('kangaSvg');
+    svg.classList.add('swing','shake');
+    setTimeout(()=>svg.classList.remove('swing','shake'),950);
+  }
+  updateScore();updateStreakBadge();
+  const exp=$('expCard');
+  exp.className='explanation-card '+(isCorrect?'correct-exp':'wrong-exp');
+  $('expTitle').textContent=isCorrect?'Correct!':'Incorrect — The answer is "'+q.choices[q.answer]+'"';
+  $('expBody').textContent=q.explain;
+  $('expRule').textContent=q.rule||'';
+  $('expRule').style.display=q.rule?'block':'none';
+  exp.style.display='block';
+  $('nextBtn').style.display='inline-block';
+  $('nextBtn').onclick=()=>{qIndex++;showQuestion();};
+}
+
+function updateScore(){$('scoreVal').textContent=score;}
+function updateLives(){
+  let h='';
+  for(let i=0;i<maxLives;i++) h+='<span class="life-heart '+(i<lives?'':'lost')+'">&#x2764;&#xFE0F;</span>';
+  $('livesRow').innerHTML=h;
+}
+function updateStreakBadge(){
+  $('streakVal').textContent=streak;
+  $('streakBadge').classList.toggle('visible',streak>=2);
+}
+function showPointsPopup(text,color){
+  const p=$('pointsPopup');
+  p.textContent=text;p.style.color=color;
+  p.className='points-popup';void p.offsetWidth;
+  p.classList.add('show');
+  setTimeout(()=>p.classList.remove('show'),1000);
+}
+function showFace(type){
+  const mn=$('mouthNormal'),mh=$('mouthHappy'),ms=$('mouthSad');
+  if(!mn)return;
+  mn.style.display=type==='normal'?'block':'none';
+  mh.style.display=type==='happy'?'block':'none';
+  ms.style.display=type==='sad'?'block':'none';
+}
+function resetKangaroo(){
+  for(let i=1;i<=7;i++) $('kPart'+i).style.display='none';
+  $('kDead').style.display='none';
+  $('eyesNormal').style.display='block';
+  $('eyesBlink').style.display='none';
+  showFace('normal');
+  $('kangaSvg').classList.remove('dead','swing','shake');
+}
+function revealKangarooPart(n){
+  if(n>=1&&n<=7){
+    const p=$('kPart'+n);
+    p.style.display='block';p.style.opacity='0';p.style.transition='opacity 0.4s ease';
+    setTimeout(()=>p.style.opacity='1',20);
+  }
+}
+function showDeadFace(){
+  $('kDead').style.display='block';
+  $('eyesNormal').style.display='none';
+  $('eyesBlink').style.display='none';
+  showFace('sad');
+  $('kangaSvg').classList.add('dead');
+  stopBlink();
+}
+function endGame(){
+  clearInterval(timerInterval);
+  stopMusic();stopBlink();
+  const won=lives>0;
+  $('endEmoji').innerHTML=won?'&#x1F389;':'&#x1F998;';
+  $('endTitle').textContent=won?'Congratulations!':'Game Over';
+  $('endPlayerMsg').textContent=won?'Well done, '+playerName+'!':'Better luck next time, '+playerName+'!';
+  $('endScore').textContent=score;
+  const total=correctCount+wrongCount;
+  const acc=total>0?Math.round((correctCount/total)*100):0;
+  $('endMsg').textContent=won?'You saved the kangaroo! Great grammar skills!':'The kangaroo has been hanged. Keep practicing!';
+  $('endCorrect').textContent=correctCount;
+  $('endWrong').textContent=wrongCount;
+  $('endBestStreak').textContent=bestStreak;
+  $('endAccuracy').textContent=acc+'%';
+  $('endOverlay').classList.add('active');
+  $('exitBtn').style.display='none';
+}
+</script>
+</body>
+</html>
